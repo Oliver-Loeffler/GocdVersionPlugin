@@ -1,0 +1,49 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.14.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+group = 'net.raumzeitfalle.gradle.gocd'
+version = '1.0-SNAPSHOT'
+
+pluginBundle {
+    website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'
+    vcsUrl = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin.git'
+    tags = ['versioning', 'gocd' ,'ci/cd' ,'cruise-control']
+}
+
+gradlePlugin {
+    plugins {
+        gocdVersionPlugin {
+            id = 'net.raumzeitfalle.gradle.gocdversion'
+            displayName = 'GoCD Version Number Plugin'
+            description = 'Generates version numbers from GoCD pipeline environment numbers.'
+            implementationClass = 'net.raumzeitfalle.gradle.gocd.versioning.GocdVersionPlugin'
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+}

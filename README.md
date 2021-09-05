@@ -1,4 +1,4 @@
-# Project Idea: GitGocdVersionPlugin for Gradle
+# Project Idea: GocdVersionPlugin for Gradle
 
 Warning, this is very experimental and not meant to be used in production environments.
 It is also tailored for a special use case and for me it is a learning experience on how Gradle plugins work.

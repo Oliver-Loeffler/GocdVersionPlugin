@@ -98,7 +98,7 @@ Is automated build?  = false
 
 ## License
 
-Copyright 2019 Oliver Löffler
+Copyright 2021 Oliver Löffler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

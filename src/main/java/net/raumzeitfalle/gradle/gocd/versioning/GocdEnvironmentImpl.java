@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class GocdEnvironmentImpl implements GocdEnvironment {
 
@@ -17,7 +18,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     public void setEnvVariable(EnvironmentVariables variable, String value) {
         Objects.requireNonNull(variable, "variable must not be null");
         if (value == null || value.isBlank()) {
-            environment.remove(variable);
+            environment.remove(variable.toString());
         } else {
             environment.put(variable.toString(), value.strip());
         }
@@ -25,27 +26,53 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
 
     @Override
     public String getComputerName() {
-        String computerName = getenv("COMPUTERNAME");
-        if (null == computerName) {
-            return fromHostName();
-        } else {
-            return computerName;
-        }
+        return getEnvOrDefault("COMPUTERNAME", ()->fromHostName());
     }
 
     @Override
-    public String getPipelineCounter() {
-        String counter = getenv("GO_PIPELINE_COUNTER");
-        if (null == counter) {
-            return "";
-        } else {
-            return counter;
-        }
+    public int getPipelineCounter() {
+        return fromEnvOrDefault("GO_PIPELINE_COUNTER", 0);
     }
+    
+    @Override
+    public String getPipelineLabel() {
+        return getEnvOrDefault("GO_PIPELINE_LABEL", ()->"");
+    }
+    
+    @Override
+    public String getPipelineName() {
+        return getEnvOrDefault("GO_PIPELINE_NAME", ()->"");
+    }
+    
+    @Override
+    public String getStageName() {
+        return getEnvOrDefault("GO_STAGE_NAME", ()->"");
+    }
+    
+    @Override
+    public int getStageCounter() {
+        return fromEnvOrDefault("GO_STAGE_COUNTER", 0);
+    }
+    
+    @Override
+    public String getServerUrl() {
+        return getEnvOrDefault("GO_SERVER_URL", ()->"");
+    }
+    
+    @Override
+    public String getJobName() {
+        return getEnvOrDefault("GO_JOB_NAME", ()->"");
+    }
+    
 
+    @Override
+    public String getTriggerUser() {
+        return getEnvOrDefault("GO_TRIGGER_USER", ()->"");
+    }
+    
     @Override
     public boolean isAutomatedBuild() {
-        return !"".equalsIgnoreCase(getPipelineCounter());
+        return getPipelineCounter()>0;
     }
 
     private String getenv(String name) {
@@ -57,6 +84,24 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException error) {
             return "LOCALBUILD";
+        }
+    }
+    
+    private int fromEnvOrDefault(String variableName, int defaultValue) {
+        String value = getEnvOrDefault(variableName, ()->Integer.toString(defaultValue));
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
+    
+    private String getEnvOrDefault(String variableName, Supplier<String> defaultValue) {
+        String value = getenv(variableName);
+        if (null == value) {
+            return "";
+        } else {
+            return  value;
         }
     }
 }

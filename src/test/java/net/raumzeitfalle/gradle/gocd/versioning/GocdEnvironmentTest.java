@@ -1,15 +1,13 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
-import net.raumzeitfalle.gradle.gocd.versioning.EnvironmentVariables;
-import net.raumzeitfalle.gradle.gocd.versioning.GocdEnvironment;
-import net.raumzeitfalle.gradle.gocd.versioning.GocdEnvironmentImpl;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.util.Collections;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
 
 public class GocdEnvironmentTest {
 

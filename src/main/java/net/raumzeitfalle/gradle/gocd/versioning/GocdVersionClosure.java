@@ -5,14 +5,15 @@ import groovy.lang.Closure;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class GocdVersionClosure extends Closure {
+@SuppressWarnings({"serial"})
+public class GocdVersionClosure<V> extends Closure<V> {
 
     private final Supplier<GocdEnvironment> environmentSupplier;
 
     private final GocdVersionPluginExtension ext;
 
     public GocdVersionClosure(Supplier<GocdEnvironment> environmentSupplier, GocdVersionPluginExtension ext, Object owner) {
-        super(owner, owner);
+        super(owner);
         this.environmentSupplier = Objects.requireNonNull(environmentSupplier, "environmentSupplier must not be null");
         this.ext                 = Objects.requireNonNull(ext, "extension must not be null");
     }

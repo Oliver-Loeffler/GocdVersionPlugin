@@ -1,8 +1,5 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class GocdVersionPluginExtension {

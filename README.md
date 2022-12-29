@@ -25,7 +25,7 @@ As of now for a Java library the Gradle code (Groovy DSL) looks as follows:
 ```groovy
 plugins {
     id "java-library"
-    id "com.palantir.git-version" version "0.12.3"
+    id "com.palantir.git-version" version "0.15.0"
     id 'net.raumzeitfalle.gradle.gocdversion' version '1.0-SNAPSHOT'
 }
 
@@ -55,8 +55,8 @@ With the configuration in the example, the created version number looks as follo
 * the build is executed in a GoCD pipeline with `GO_PIPELINE_COUNTER=153.1`):
 
 ```
-   # (tag.commit-distance.pipeline-counter)
-   version = 1.0.0.153.1
+# (tag.commit-distance.pipeline-counter)
+version = 1.0.0.153.1
 ```
 
 #### Example 2, manual (local) build on developer machine
@@ -65,11 +65,11 @@ With the configuration in the example, the created version number looks as follo
 * the build is executed on a computer with name ENIAC, there is no environment variable `GO_PIPELINE_COUNTER=xyz`):
 
 ```
-   # (tag.commit-distance-hash.computername.timestamp)
-   version = 1.0.0-96bfec85d4.ENIAC.20210906000609  
+# (tag.commit-distance-hash.computername.timestamp)
+version = 1.0.0-96bfec85d4.ENIAC.20210906000609  
 ```
 
-Using the `gocdVersion` closure the versioning schema can be configured.
+Using the `gocdVersion` closure the version schema can be configured.
 
 ```groovy
 
@@ -85,15 +85,34 @@ The effective version number schema can be verified using the `printGocdEnvironm
 
 ```shell
 > ./gradlew printGocdEnvironment
-
+---------------------------------------------------
 Gocd Pipeline Environment
-=========================
+---------------------------------------------------
+GO_PIPELINE_COUNTER       = 12.1
+GO_PIPELINE_NAME          = test-build
+GO_PIPELINE_LABEL         = 1.12.1
+GO_STAGE_NAME             = build
+GO_STAGE_COUNTER          = 1
+GO_SERVER_URL             = http://192.168.1.2:8053
+GO_JOB_NAME               = build
+GO_TRIGGER_USER           = changes
+COMPUTERNAME              = ENIAC
+---------------------------------------------------
+Project version           = 20220526.2.12.1
+Is automated build?       = true
+---------------------------------------------------
 
-COMPUTERNAME         = ENIAC
-GO_PIPELINE_COUNTER  =
-Project version      = 1.0.0-96bfec85d4.ENIAC.20210906000609
-Is automated build?  = false
+```
 
+#### Example 3, generating a MSI/WIX compatible version number from Git tag
+* git tag such as `20220930` exists
+* there were 12 commits after the tag, so the commit distance is 12
+
+```
+# (tag.commit-distance.pipeline-counter)
+def jpkgversion = jpackageVersion(versionDetails().lastTag+'.'+versionDetails().commitDistance).build()
+println(jpkgversion)
+22.39.12
 ```
 
 ## License

@@ -4,7 +4,7 @@ public interface GocdEnvironment {
 
     void setEnvVariable(EnvironmentVariables variable, String value);
     String getComputerName();
-    int getPipelineCounter();
+    String getPipelineCounter();
     String getPipelineLabel();
     String getPipelineName();
     String getStageName();
@@ -13,5 +13,6 @@ public interface GocdEnvironment {
     String getJobName();
     String getTriggerUser();
     boolean isAutomatedBuild();
-
+    String get(EnvironmentVariables variable);
+    
 }

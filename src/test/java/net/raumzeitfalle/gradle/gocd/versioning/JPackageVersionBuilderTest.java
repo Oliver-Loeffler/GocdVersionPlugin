@@ -14,6 +14,8 @@ class JPackageVersionBuilderTest {
     private JPackageVersionBuilder classUnderTest;
     
     private GocdVersionPluginExtension extension;
+    
+    private org.gradle.api.logging.Logger logger = org.gradle.api.logging.Logging.getLogger("TEST");;
 
     @BeforeEach
     public void prepareTest() {
@@ -23,24 +25,24 @@ class JPackageVersionBuilderTest {
     
     @Test
     void that_MSI_WIX_compatible_version_is_created_from_autoBuildVersion() {
-        classUnderTest = new JPackageVersionBuilder(extension, "20211125.12");
+        classUnderTest = new JPackageVersionBuilder(extension, "20211125.12", logger);
         assertEquals("21.47.12", classUnderTest.build());
     }
     
     @Test
     void that_MSI_WIX_compatible_version_is_created_by_default_for_blank_version_string() {
-        classUnderTest = new JPackageVersionBuilder(extension, "");
+        classUnderTest = new JPackageVersionBuilder(extension, "", logger);
         assertEquals("21.35.06", classUnderTest.build());
     }
     
     @Test
     void that_exception_is_thrown_when_commit_distance_exceeds_255() {
-        classUnderTest = new JPackageVersionBuilder(extension, "20211125.256");
+        classUnderTest = new JPackageVersionBuilder(extension, "20211125.256", logger);
         Throwable t = assertThrows(GradleException.class, ()->classUnderTest.build());
         
         String expected = "Cannot build MSI/WIX compatible version number. "
                         + "The patch version exceeds 255. "
-                        + "Please rework the supplied version String. "
+                        + "Please rework the supplied version String (20211125.256). "
                         + "Expected: yyyyMMdd.patch";
         
         assertEquals(expected, t.getMessage());
@@ -48,11 +50,11 @@ class JPackageVersionBuilderTest {
     
     @Test
     void that_exception_is_thrown_when_date_cannot_be_parsed_from_autoversion() {
-        classUnderTest = new JPackageVersionBuilder(extension, "99999999.0");
+        classUnderTest = new JPackageVersionBuilder(extension, "99999999.0", logger);
         Throwable t = assertThrows(GradleException.class, ()->classUnderTest.build());
         
         String expected = "Cannot build MSI/WIX compatible version number. "
-                        + "Failed to parse the timestamp from supplied version String. "
+                        + "Failed to parse the timestamp from supplied version String (99999999.0). "
                         + "Expected: yyyyMMdd.patch";
         
         assertEquals(expected, t.getMessage());

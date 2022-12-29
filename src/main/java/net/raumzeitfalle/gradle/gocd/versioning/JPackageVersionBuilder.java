@@ -7,22 +7,20 @@ import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 import org.gradle.api.GradleException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gradle.api.logging.Logger;
 
-
-public class JPackageVersionBuilder {
-    
+public class JPackageVersionBuilder {  
     
     private final GocdVersionPluginExtension extension;
     private final Object autoBuildVersion;
     private final Logger logger;
     
     public JPackageVersionBuilder(GocdVersionPluginExtension extension, 
-                                  Object autoBuildVersion) {
+                                  Object autoBuildVersion,
+                                  Logger logger) {
         this.extension          = Objects.requireNonNull(extension, "extension must not be null");
         this.autoBuildVersion   = Objects.requireNonNull(autoBuildVersion, "autoBuildVersion must not be null");
-        this.logger = LoggerFactory.getLogger("net.raumzeitfalle.gradle.gocd.versioning");
+        this.logger = logger;
     }
     
     public String build() {
@@ -45,22 +43,23 @@ public class JPackageVersionBuilder {
                 tagDate = LocalDate.parse(assumedTimestamp,DateTimeFormatter.ofPattern("yyyyMMdd"));
             } catch (DateTimeParseException parseError) {
                 String message = "Cannot build MSI/WIX compatible version number. Failed to parse the timestamp "
-                               + "from supplied version String. Expected: yyyyMMdd.patch";
-                throw new GradleException(message);
+                               + "from supplied version String (%s). Expected: yyyyMMdd.patch";
+                throw new GradleException(String.format(message, versionBase));
             }
 
             int commitDist = Integer.parseInt(commitDistance);
             if (commitDist > 255) {
                 String message = "Cannot build MSI/WIX compatible version number. The patch version exceeds 255. "
-                               + "Please rework the supplied version String. Expected: yyyyMMdd.patch";
-                throw new GradleException(message);
+                               + "Please rework the supplied version String (%s). Expected: yyyyMMdd.patch";
+                throw new GradleException(String.format(message, versionBase));
             }
             return tagWithCommitDistVersion(tagDate, commitDist);
         }
         
-        String message = "Auto-generating JPackageVersion from timestamp as the supplied autoBuildVersion (%s) "
+        String message = "Generating JPackageVersion from todays timestamp as the supplied autoBuildVersion value (%s) "
                        + "does not match the expected pattern: yyyyMMdd.patch";
-        logger.warn(message);
+
+        logger.warn(String.format(message, versionBase));
         return getDefaultVersion();
     }
 

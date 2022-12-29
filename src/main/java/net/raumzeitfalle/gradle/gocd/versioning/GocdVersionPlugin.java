@@ -31,6 +31,6 @@ public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
         GocdVersionPluginExtension ext = project.getExtensions().getByType(GocdVersionPluginExtension.class);
         ExtraPropertiesExtension extras = project.getExtensions().getExtraProperties();
         extras.set("gocdVersion", new GocdVersionClosure(environmentSupplier,ext,this));
-        extras.set("jpackageVersion", new JPackageVersionClosure(ext,this));
+        extras.set("jpackageVersion", new JPackageVersionClosure(project,ext,this));
     }
 }

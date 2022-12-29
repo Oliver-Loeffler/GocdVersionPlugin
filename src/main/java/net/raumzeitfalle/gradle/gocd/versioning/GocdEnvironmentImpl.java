@@ -30,8 +30,8 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     }
 
     @Override
-    public int getPipelineCounter() {
-        return fromEnvOrDefault("GO_PIPELINE_COUNTER", 0);
+    public String getPipelineCounter() {
+        return getEnvOrDefault("GO_PIPELINE_COUNTER", ()->"");
     }
     
     @Override
@@ -72,7 +72,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     
     @Override
     public boolean isAutomatedBuild() {
-        return getPipelineCounter()>0;
+        return !"".equalsIgnoreCase(getPipelineCounter());
     }
 
     private String getenv(String name) {
@@ -99,9 +99,14 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     private String getEnvOrDefault(String variableName, Supplier<String> defaultValue) {
         String value = getenv(variableName);
         if (null == value) {
-            return "";
+            return defaultValue.get();
         } else {
             return  value;
         }
+    }
+
+    @Override
+    public String get(EnvironmentVariables variable) {
+        return getEnvOrDefault(variable.toString(), ()->"");
     }
 }

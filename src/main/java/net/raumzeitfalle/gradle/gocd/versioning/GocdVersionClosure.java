@@ -5,8 +5,8 @@ import groovy.lang.Closure;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@SuppressWarnings({"serial"})
-public class GocdVersionClosure<V> extends Closure<V> {
+@SuppressWarnings({"serial", "rawtypes"})
+public class GocdVersionClosure<V> extends Closure {
 
     private final Supplier<GocdEnvironment> environmentSupplier;
 

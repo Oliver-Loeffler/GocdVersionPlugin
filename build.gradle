@@ -1,5 +1,6 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'signing'
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '1.1.0'
 }
@@ -14,7 +15,7 @@ java {
 }
 
 group = 'net.raumzeitfalle.gradle.gocd'
-version = '1.6-SNAPSHOT'
+version = '1.0'
 
 pluginBundle {
     website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'

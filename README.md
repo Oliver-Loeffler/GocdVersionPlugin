@@ -26,7 +26,7 @@ As of now for a Java library the Gradle code (Groovy DSL) looks as follows:
 plugins {
     id "java-library"
     id "com.palantir.git-version" version "0.15.0"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '1.0-SNAPSHOT'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.1'
 }
 
 # Git details are provided by git-version plugin

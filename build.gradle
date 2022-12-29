@@ -15,7 +15,7 @@ java {
 }
 
 group = 'net.raumzeitfalle.gradle.gocd'
-version = '1.0'
+version = '0.0.1'
 
 pluginBundle {
     website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'
@@ -28,7 +28,9 @@ gradlePlugin {
         gocdVersionPlugin {
             id = 'net.raumzeitfalle.gradle.gocdversion'
             displayName = 'GoCD Version Number Plugin'
-            description = 'Generates version numbers from GoCD pipeline environment numbers.'
+            description = 'Allows to use GoCD pipeline environment details to be used in version numbers. '+
+                          'Provides very simple method to create MSI/WIX compatible version numbers e.g. from '+
+                          'Git version tag.'
             implementationClass = 'net.raumzeitfalle.gradle.gocd.versioning.GocdVersionPlugin'
         }
     }

@@ -14,7 +14,10 @@ public class GocdVersionBuilder {
 
     private final GocdVersionPluginExtension extension;
 
-    public GocdVersionBuilder(GocdEnvironment environment, GocdVersionPluginExtension extension, Object manualBuildVersion, Object autoBuildVersion) {
+    public GocdVersionBuilder(GocdEnvironment environment, 
+                              GocdVersionPluginExtension extension, 
+                              Object manualBuildVersion, 
+                              Object autoBuildVersion) {
         this.gocdEnvironment    = Objects.requireNonNull(environment, "environment must not be null");
         this.manualBuildVersion = checkProjectVersion(manualBuildVersion, "undefined");
         this.autoBuildVersion   = checkProjectVersion(autoBuildVersion, this.manualBuildVersion);
@@ -34,6 +37,10 @@ public class GocdVersionBuilder {
             versionBuilder.append(autoBuildVersion);
             if(extension.getAppendPipelineCounterToAutomatedBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getPipelineCounter());
+            }
+            
+            if(extension.getAppendStageCounterToAutomatedBuilds()) {
+                versionBuilder.append(".").append(gocdEnvironment.getStageCounter());
             }
         } else {
             String formattedTimestamp = getFormattedTimestamp();

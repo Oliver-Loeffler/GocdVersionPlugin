@@ -4,20 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
 public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
 
-    private final Supplier<GocdEnvironment> environmentSupplier;
+    private final Function<Project,GocdEnvironment> environmentSupplier;
 
     public PrintGocdEnvironmentTask() {
-        this(()->new GocdEnvironmentImpl(System.getenv()));
+        this(project->new GocdEnvironmentImpl(project, System.getenv()));
     }
 
-    PrintGocdEnvironmentTask(Supplier<GocdEnvironment> environmentSupplier) {
+    PrintGocdEnvironmentTask(Function<Project,GocdEnvironment> environmentSupplier) {
         this.environmentSupplier = Objects.requireNonNull(environmentSupplier);
         this.setGroup("Versioning");
         this.setDescription("Shows all Gocd related environment details");
@@ -25,11 +26,11 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
 
     String prepareMessage() {
         Object version = getProject().getVersion();
-        GocdEnvironment env = environmentSupplier.get();
+        GocdEnvironment env = environmentSupplier.apply(getProject());
        
         List<String> allItems = new ArrayList<>(); 
-        Arrays.stream(EnvironmentVariables.values())
-              .map(EnvironmentVariables::toString)
+        Arrays.stream(GOCD.values())
+              .map(GOCD::toString)
               .forEach(allItems::add);
         
         String title = "Gocd Pipeline Environment";
@@ -45,7 +46,7 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
                                .orElse(0);
         
         List<String> allLines = new ArrayList<>();
-        for (EnvironmentVariables variable : EnvironmentVariables.values()) {
+        for (GOCD variable : GOCD.values()) {
             StringBuilder line = new StringBuilder(variable.toString());
             padding(line, maxWidth-variable.toString().length());
             line.append(" = ")

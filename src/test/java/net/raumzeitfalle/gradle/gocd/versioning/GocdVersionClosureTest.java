@@ -8,14 +8,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.gradle.api.Project;
+import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class GocdVersionClosureTest {
 
+    private static Project project;
+    
     GocdVersionPluginExtension ext = null;
 
+    @BeforeAll
+    public static void prepareProject() {
+        project = ProjectBuilder.builder().build();
+        project.getPluginManager().apply("net.raumzeitfalle.gradle.gocdversion");
+    }
+    
     @BeforeEach
     void prepare() {
         ext = new GocdVersionPluginExtension();
@@ -25,7 +35,7 @@ public class GocdVersionClosureTest {
     @Test
     void that_closure_is_correctly_wired_with_version_builder() {
 
-        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(mapOf(EnvironmentVariables.COMPUTERNAME, "HAL9000"));
+        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(project,mapOf(GOCD.COMPUTERNAME, "HAL9000"));
 
         GocdVersionClosure closure = new GocdVersionClosure(env,ext, this);
 
@@ -38,9 +48,10 @@ public class GocdVersionClosureTest {
 
     @Test
     void that_auto_version_is_properly_generated_by_closure() {
-
-        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(mapOf(EnvironmentVariables.COMPUTERNAME, "HAL9000",
-                                                                          EnvironmentVariables.GO_PIPELINE_COUNTER, "123.1"));
+        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(project, 
+                                                                    mapOf(GOCD.COMPUTERNAME,  "HAL9000",
+                                                                    GOCD.GO_PIPELINE_COUNTER, "123",
+                                                                    GOCD.GO_STAGE_COUNTER,    "1"));
 
         GocdVersionClosure closure = new GocdVersionClosure(env,ext, this);
 
@@ -48,20 +59,21 @@ public class GocdVersionClosureTest {
 
         assertTrue(returnValue instanceof GocdVersionBuilder);
         assertEquals("AUTO-VERSION.123.1", ((GocdVersionBuilder) returnValue).build());
-
     }
     
-    private Map<String,String> mapOf(EnvironmentVariables variable, String value) {
+    private Map<String,String> mapOf(GOCD variable, String value) {
         Map<String,String> map = new HashMap<>();
         map.put(variable.toString(), value);
         return map;
     }
     
-    private Map<String,String> mapOf(EnvironmentVariables variable1, String value1,
-                                     EnvironmentVariables variable2, String value2) {
+    private Map<String,String> mapOf(GOCD variable1, String value1,
+                                     GOCD variable2, String value2,
+                                     GOCD variable3, String value3) {
         Map<String,String> map = new HashMap<>();
         map.put(variable1.toString(), value1);
         map.put(variable2.toString(), value2);
+        map.put(variable3.toString(), value3);
         return map;
     }
 }

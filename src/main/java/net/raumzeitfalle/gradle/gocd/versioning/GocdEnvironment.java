@@ -1,18 +1,26 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
-public interface GocdEnvironment {
+import java.util.List;
 
-    void setEnvVariable(EnvironmentVariables variable, String value);
-    String getComputerName();
-    String getPipelineCounter();
+public interface GocdEnvironment {
+    String getServerUrl();
+    String getPipelineGroupName();
+    String getEnvironmentName();
+    
+    List<String> getAgentResources();
+    void setEnvVariable(GOCD variable, String value);
+    
     String getPipelineLabel();
     String getPipelineName();
+    int getPipelineCounter();
+    
     String getStageName();
     int getStageCounter();
-    String getServerUrl();
+    
     String getJobName();
     String getTriggerUser();
-    boolean isAutomatedBuild();
-    String get(EnvironmentVariables variable);
     
+    String get(GOCD variable);
+    boolean isAutomatedBuild();
+    String getComputerName();    
 }

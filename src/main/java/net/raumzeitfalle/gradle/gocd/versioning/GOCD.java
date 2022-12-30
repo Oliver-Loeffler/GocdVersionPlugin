@@ -1,9 +1,12 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
-public enum EnvironmentVariables {
+public enum GOCD {
     GO_SERVER_URL,
-    
+    GO_PIPELINE_GROUP_NAME,
+    GO_ENVIRONMENT_NAME,
+
     GO_TRIGGER_USER,
+    GO_AGENT_RESOURCES,
     
     GO_PIPELINE_NAME,
     GO_PIPELINE_COUNTER,

@@ -7,19 +7,19 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 
 import groovy.lang.Closure;
 
-@SuppressWarnings({"serial", "unchecked", "rawtypes"})
 public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
 
     @SuppressWarnings("unused")
     private static final String GROUP = "Versioning";
 
+    @SuppressWarnings("serial")
     @Override
     public void apply(Project project) {
 
         project.getExtensions().create("gocdVersion", GocdVersionPluginExtension.class);
         project.getTasks().register("printGocdEnvironment", PrintGocdEnvironmentTask.class);
 
-        Supplier<GocdEnvironment> environmentSupplier = ()->new GocdEnvironmentImpl(System.getenv());
+        Supplier<GocdEnvironment> environmentSupplier = ()->new GocdEnvironmentImpl(project, System.getenv());
 
         project.getExtensions().getExtraProperties().set("gocdEnvironment", new Closure<GocdEnvironment>(this,this)  {
             @SuppressWarnings("unused")

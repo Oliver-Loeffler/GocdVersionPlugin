@@ -8,6 +8,7 @@ public class GocdVersionPluginExtension {
     private String timestampPattern = defaultTimestampPattern;
     private Supplier<LocalDateTime> timestampSupplier = ()->LocalDateTime.now();
     private boolean appendPipelineCounterToAutomatedBuilds = true;
+    private boolean appendStageCounterToAutomatedBuilds = true;
     private boolean appendComputerNameToLocalBuilds = true;
     private boolean appendTimestampToLocalBuilds = true;
 
@@ -45,6 +46,14 @@ public class GocdVersionPluginExtension {
 
     public void setAppendPipelineCounterToAutomatedBuilds(boolean toggle) {
         this.appendPipelineCounterToAutomatedBuilds = toggle;
+    }
+    
+    public boolean getAppendStageCounterToAutomatedBuilds() {
+        return appendStageCounterToAutomatedBuilds;
+    }
+
+    public void setAppendStageCounterToAutomatedBuilds(boolean toggle) {
+        this.appendStageCounterToAutomatedBuilds = toggle;
     }
 
     public boolean getAppendComputerNameToLocalBuilds() {

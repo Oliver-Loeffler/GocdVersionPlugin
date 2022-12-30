@@ -2,20 +2,29 @@ package net.raumzeitfalle.gradle.gocd.versioning;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import org.gradle.api.Project;
 
 public class GocdEnvironmentImpl implements GocdEnvironment {
 
     private final Map<String,String> environment;
+    
+    private final Project project;
 
-    public GocdEnvironmentImpl(Map<String,String> systemEnvironment) {
+    public GocdEnvironmentImpl(Project project, Map<String,String> systemEnvironment) {
         this.environment = Objects.requireNonNull(systemEnvironment, "systemEnvironment must not be null");
+        this.project = Objects.requireNonNull(project);
     }
 
     @Override
-    public void setEnvVariable(EnvironmentVariables variable, String value) {
+    public void setEnvVariable(GOCD variable, String value) {
         Objects.requireNonNull(variable, "variable must not be null");
         if (value == null || "".equalsIgnoreCase(value.trim())) {
             environment.remove(variable.toString());
@@ -28,51 +37,70 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     public String getComputerName() {
         return getEnvOrDefault("COMPUTERNAME", ()->fromHostName());
     }
-
+    
     @Override
-    public String getPipelineCounter() {
-        return getEnvOrDefault("GO_PIPELINE_COUNTER", ()->"");
+    public String getPipelineGroupName() {
+        return getEnvOrDefault(GOCD.GO_PIPELINE_GROUP_NAME, ()->"");
+    }
+    
+    @Override
+    public String getEnvironmentName() {
+        return getEnvOrDefault(GOCD.GO_ENVIRONMENT_NAME, ()->"");
+    }
+    
+    @Override
+    public int getPipelineCounter() {
+        return fromEnvOrDefault(GOCD.GO_PIPELINE_COUNTER, 0);
     }
     
     @Override
     public String getPipelineLabel() {
-        return getEnvOrDefault("GO_PIPELINE_LABEL", ()->"");
+        return getEnvOrDefault(GOCD.GO_PIPELINE_LABEL, ()->"");
     }
     
     @Override
     public String getPipelineName() {
-        return getEnvOrDefault("GO_PIPELINE_NAME", ()->"");
+        return getEnvOrDefault(GOCD.GO_PIPELINE_NAME, ()->"");
     }
     
     @Override
     public String getStageName() {
-        return getEnvOrDefault("GO_STAGE_NAME", ()->"");
+        return getEnvOrDefault(GOCD.GO_STAGE_NAME, ()->"");
     }
     
     @Override
     public int getStageCounter() {
-        return fromEnvOrDefault("GO_STAGE_COUNTER", 0);
+        return fromEnvOrDefault(GOCD.GO_STAGE_COUNTER, 0);
     }
     
     @Override
     public String getServerUrl() {
-        return getEnvOrDefault("GO_SERVER_URL", ()->"");
+        return getEnvOrDefault(GOCD.GO_SERVER_URL, ()->"");
     }
     
     @Override
     public String getJobName() {
-        return getEnvOrDefault("GO_JOB_NAME", ()->"");
+        return getEnvOrDefault(GOCD.GO_JOB_NAME, ()->"");
     }
-    
 
     @Override
     public String getTriggerUser() {
-        return getEnvOrDefault("GO_TRIGGER_USER", ()->"");
+        return getEnvOrDefault(GOCD.GO_TRIGGER_USER, ()->"");
+    }
+    
+    @Override
+    public List<String> getAgentResources() {
+        String configuredResources = getEnvOrDefault(GOCD.GO_AGENT_RESOURCES, ()->"").trim();
+        if ("".equalsIgnoreCase(configuredResources)) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(configuredResources.split(","))
+                     .collect(Collectors.toList());
     }
     
     @Override
     public boolean isAutomatedBuild() {
-        return !"".equalsIgnoreCase(getPipelineCounter());
+        return environment.containsKey(GOCD.GO_PIPELINE_COUNTER.toString());
     }
 
     private String getenv(String name) {
@@ -87,26 +115,42 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         }
     }
     
-    private int fromEnvOrDefault(String variableName, int defaultValue) {
-        String value = getEnvOrDefault(variableName, ()->Integer.toString(defaultValue));
+    private int fromEnvOrDefault(GOCD variable, int defaultValue) {
+        String value = getEnvOrDefault(variable,
+                                      ()->Integer.toString(defaultValue));
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException nfe) {
+            project.getLogger().warn("Found unexpected value \"{0}\" for GOCD env variable \"{1}\"",
+                                     new Object[] {value, variable.toString()});
             return defaultValue;
         }
     }
     
-    private String getEnvOrDefault(String variableName, Supplier<String> defaultValue) {
-        String value = getenv(variableName);
+    private String getEnvOrDefault(GOCD variable, Supplier<String> defaultValue) {
+        return getEnvOrDefault(variable.toString(), defaultValue);
+    }
+    
+    private String getEnvOrDefault(String variable, Supplier<String> defaultValue) {
+        String value = getenv(variable.toString());
         if (null == value) {
+            project.getLogger()
+                   .debug("Environment variable \"{0}\" nof found!",variable);
             return defaultValue.get();
         } else {
+            if ("".equalsIgnoreCase(value)) {
+                project.getLogger()
+                       .debug("Environment variable \"{0}\" is configured with aa blank String.",variable);
+            }
             return  value;
         }
     }
 
     @Override
-    public String get(EnvironmentVariables variable) {
-        return getEnvOrDefault(variable.toString(), ()->"");
+    public String get(GOCD variable) {
+        return getEnvOrDefault(variable, ()->"");
     }
+
+
+
 }

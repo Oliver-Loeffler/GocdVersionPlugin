@@ -68,13 +68,19 @@ public class JPackageVersionBuilder {
         String major = DateTimeFormatter.ofPattern("YY").format(date);
         String minor = DateTimeFormatter.ofPattern("ww").format(date);
         String patch = DateTimeFormatter.ofPattern("ee").format(date);
-        return major+"."+minor+"."+patch;
+        String version = major+"."+minor+"."+patch;
+        String message = "Went with default version strategy: %s";
+        logger.lifecycle(String.format(message, version));
+        return version;
     }
     
     private String tagWithCommitDistVersion(LocalDate date, int commitDist) {
         String major = DateTimeFormatter.ofPattern("YY").format(date);
         String minor = DateTimeFormatter.ofPattern("ww").format(date);
         String patch = Integer.toString(commitDist);
-        return major+"."+minor+"."+patch;
+        String version = major+"."+minor+"."+patch;
+        String message = "Went with LocalDate.CommitDistance version strategy: %s";
+        logger.lifecycle(String.format(message, version));
+        return version;
     }
 }

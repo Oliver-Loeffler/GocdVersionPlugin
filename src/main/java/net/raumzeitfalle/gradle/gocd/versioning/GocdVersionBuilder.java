@@ -75,8 +75,8 @@ public class GocdVersionBuilder {
             return DateTimeFormatter.ofPattern(timestampPattern);
         } catch (IllegalArgumentException formatError) {
             String defaultPattern = extension.getDefaultTimestampPattern();
-            logger.debug("Failed to pares date time from String using pattern {0}. Continuing with default pattern {1}",
-                         new Object[] {timestampPattern, defaultPattern}); 
+            String template = "Failed to pares date time from String using pattern %s. Continuing with default pattern %s."; 
+            logger.debug(String.format(template, timestampPattern, defaultPattern)); 
             return DateTimeFormatter.ofPattern(defaultPattern);
         }
     }

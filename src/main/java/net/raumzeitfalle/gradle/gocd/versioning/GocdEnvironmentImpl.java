@@ -121,8 +121,8 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException nfe) {
-            project.getLogger().warn("Found unexpected value \"{0}\" for GOCD env variable \"{1}\"",
-                                     new Object[] {value, variable.toString()});
+            String template = "Found unexpected value \"%s\" for GOCD env variable \"%s\"";
+            project.getLogger().warn(String.format(template, value, variable.toString()));
             return defaultValue;
         }
     }
@@ -134,13 +134,13 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     private String getEnvOrDefault(String variable, Supplier<String> defaultValue) {
         String value = getenv(variable.toString());
         if (null == value) {
-            project.getLogger()
-                   .debug("Environment variable \"{0}\" nof found!",variable);
+            String template = "Environment variable \"%s\" nof found!";
+            project.getLogger().debug(String.format(template, variable));
             return defaultValue.get();
         } else {
             if ("".equalsIgnoreCase(value)) {
-                project.getLogger()
-                       .debug("Environment variable \"{0}\" is configured with aa blank String.",variable);
+                String template = "Environment variable \"%s\" is configured with a blank String.";
+                project.getLogger().debug(String.format(template, variable));
             }
             return  value;
         }

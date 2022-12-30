@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
+
 public class GocdVersionBuilder {
 
     private final GocdEnvironment gocdEnvironment;
@@ -14,10 +17,14 @@ public class GocdVersionBuilder {
 
     private final GocdVersionPluginExtension extension;
 
-    public GocdVersionBuilder(GocdEnvironment environment, 
+    private final Logger logger;
+
+    public GocdVersionBuilder(Project project,
+                              GocdEnvironment environment, 
                               GocdVersionPluginExtension extension, 
                               Object manualBuildVersion, 
                               Object autoBuildVersion) {
+        this.logger             = Objects.requireNonNull(project).getLogger();
         this.gocdEnvironment    = Objects.requireNonNull(environment, "environment must not be null");
         this.manualBuildVersion = checkProjectVersion(manualBuildVersion, "undefined");
         this.autoBuildVersion   = checkProjectVersion(autoBuildVersion, this.manualBuildVersion);
@@ -52,6 +59,7 @@ public class GocdVersionBuilder {
                 versionBuilder.append(".").append(formattedTimestamp);
             }
         }
+        logger.debug("Version built: " + versionBuilder);
         return versionBuilder.toString();
     }
 
@@ -66,7 +74,10 @@ public class GocdVersionBuilder {
         try {
             return DateTimeFormatter.ofPattern(timestampPattern);
         } catch (IllegalArgumentException formatError) {
-            return DateTimeFormatter.ofPattern(extension.getDefaultTimestampPattern());
+            String defaultPattern = extension.getDefaultTimestampPattern();
+            logger.debug("Failed to pares date time from String using pattern {0}. Continuing with default pattern {1}",
+                         new Object[] {timestampPattern, defaultPattern}); 
+            return DateTimeFormatter.ofPattern(defaultPattern);
         }
     }
 }

@@ -37,7 +37,7 @@ public class GocdVersionClosureTest {
 
         Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(project,mapOf(GOCD.COMPUTERNAME, "HAL9000"));
 
-        GocdVersionClosure closure = new GocdVersionClosure(env,ext, this);
+        GocdVersionClosure closure = new GocdVersionClosure(project,env,ext, this);
 
         Object returnValue = closure.doCall("AUTO-VERSION", "MANUAL-VERSION");
 
@@ -53,7 +53,7 @@ public class GocdVersionClosureTest {
                                                                     GOCD.GO_PIPELINE_COUNTER, "123",
                                                                     GOCD.GO_STAGE_COUNTER,    "1"));
 
-        GocdVersionClosure closure = new GocdVersionClosure(env,ext, this);
+        GocdVersionClosure closure = new GocdVersionClosure(project,env,ext, this);
 
         Object returnValue = closure.doCall("AUTO-VERSION", "MANUAL-VERSION");
 

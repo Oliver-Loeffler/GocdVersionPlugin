@@ -14,7 +14,9 @@ public class JPackageVersionClosure extends Closure {
     
     private final Logger logger;
     
-    public JPackageVersionClosure(Project project, GocdVersionPluginExtension ext, Object owner) {
+    public JPackageVersionClosure(Project project,
+                                  GocdVersionPluginExtension ext,
+                                  Object owner) {
         super(owner);
         this.ext    = Objects.requireNonNull(ext, "extension must not be null");
         this.logger = project.getLogger();

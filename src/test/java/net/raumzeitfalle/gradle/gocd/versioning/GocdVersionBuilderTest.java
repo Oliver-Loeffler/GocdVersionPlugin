@@ -45,7 +45,7 @@ public class GocdVersionBuilderTest {
         extension.setAppendStageCounterToAutomatedBuilds(false);
         givenProjectVersion = null;
         
-        classUnderTest = new GocdVersionBuilder(environment, extension, givenProjectVersion ,null);
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion ,null);
         
         assertEquals("undefined.156", classUnderTest.build());
     }
@@ -56,7 +56,7 @@ public class GocdVersionBuilderTest {
         environment.setEnvVariable(GOCD.GO_PIPELINE_COUNTER, "2");
         environment.setEnvVariable(GOCD.GO_STAGE_COUNTER, "1");
         givenProjectVersion = "20210912.0";
-        classUnderTest = new GocdVersionBuilder(environment, extension, givenProjectVersion, null);
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, null);
 
         assertEquals("20210912.0.2.1", classUnderTest.build());
     }
@@ -65,7 +65,7 @@ public class GocdVersionBuilderTest {
     void that_localbuild_is_added_when_project_is_not_executed_in_GOCD_environment() {
         environment.setEnvVariable(GOCD.COMPUTERNAME, "BUILDAGENT");
         givenProjectVersion = "1.0";
-        classUnderTest = new GocdVersionBuilder(environment, extension, givenProjectVersion, null);
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, null);
 
         assertEquals("1.0.BUILDAGENT.20210904192213", classUnderTest.build());
     }
@@ -76,7 +76,7 @@ public class GocdVersionBuilderTest {
         givenProjectVersion = "17.2";
         extension.setTimestampSupplier(null);
 
-        classUnderTest = new GocdVersionBuilder(environment, extension, givenProjectVersion, null);
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, null);
 
         String newVersion = classUnderTest.build();
         int lastDot = newVersion.lastIndexOf('.');
@@ -93,7 +93,7 @@ public class GocdVersionBuilderTest {
     void that_localbuild_uses_custom_versioning_schema() {
         environment.setEnvVariable(GOCD.COMPUTERNAME, "BUILDAGENT");
         givenProjectVersion = "1.0-LOCAL-BUILD";
-        classUnderTest = new GocdVersionBuilder(environment, extension, givenProjectVersion, "1.0-AUTOMATED-BUILD");
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, "1.0-AUTOMATED-BUILD");
 
         assertEquals("1.0-LOCAL-BUILD.BUILDAGENT.20210904192213", classUnderTest.build());
     }
@@ -104,7 +104,7 @@ public class GocdVersionBuilderTest {
         environment.setEnvVariable(GOCD.GO_PIPELINE_COUNTER, "23");
         environment.setEnvVariable(GOCD.GO_STAGE_COUNTER, "1");
         givenProjectVersion = "1.0-LOCAL-BUILD";
-        classUnderTest = new GocdVersionBuilder(environment, extension, givenProjectVersion, "1.0-AUTOMATED-BUILD");
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, "1.0-AUTOMATED-BUILD");
 
         assertEquals("1.0-AUTOMATED-BUILD.23.1", classUnderTest.build());
     }

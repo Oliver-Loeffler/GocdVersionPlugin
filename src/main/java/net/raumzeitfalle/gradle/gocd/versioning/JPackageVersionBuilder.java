@@ -69,7 +69,7 @@ public class JPackageVersionBuilder {
         String minor = DateTimeFormatter.ofPattern("ww").format(date);
         String patch = DateTimeFormatter.ofPattern("ee").format(date);
         String version = major+"."+minor+"."+patch;
-        String message = "Went with default version strategy: %s";
+        String message = "JPackageVersion: %s (using default strategy major.minor.patch = year.weekOfYear.dayOfWeek)";
         logger.lifecycle(String.format(message, version));
         return version;
     }
@@ -79,7 +79,7 @@ public class JPackageVersionBuilder {
         String minor = DateTimeFormatter.ofPattern("ww").format(date);
         String patch = Integer.toString(commitDist);
         String version = major+"."+minor+"."+patch;
-        String message = "Went with LocalDate.CommitDistance version strategy: %s";
+        String message = "JPackageVersion: %s (using LocalDate.CommitDistance strategy, year.weekOfYear.commitDistance)";
         logger.lifecycle(String.format(message, version));
         return version;
     }

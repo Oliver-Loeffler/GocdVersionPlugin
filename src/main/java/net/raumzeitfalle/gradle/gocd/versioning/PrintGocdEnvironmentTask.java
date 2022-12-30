@@ -47,11 +47,7 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
         List<String> allLines = new ArrayList<>();
         for (EnvironmentVariables variable : EnvironmentVariables.values()) {
             StringBuilder line = new StringBuilder(variable.toString());
-            int padding = maxWidth-variable.toString().length();
-            while (padding > 0) {
-                line.append(" ");
-                padding -= 1;
-            }
+            padding(line, maxWidth-variable.toString().length());
             line.append(" = ")
                 .append(env.get(variable));
             allLines.add(line.toString());
@@ -65,10 +61,7 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
                            .orElse(0);
         
         StringBuilder sep = new StringBuilder();
-        while(maxWidth > 0) {
-            sep.append("-");
-            maxWidth -= 1;
-        }
+        padding(sep, maxWidth, "-");
         
         allLines.add(allLines.size()-2, sep.toString());
         
@@ -87,14 +80,20 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
     
     String padded(String item, String value, int maxWidth) {
         StringBuilder line = new StringBuilder(item);
-        int padding = maxWidth-item.length();
-        while (padding > 0) {
-            line.append(" ");
-            padding -= 1;
-        }
+        padding(line, maxWidth-item.length());
         return line.append(" = ")
                    .append(value)
                    .toString();
+    }
+
+    private void padding(StringBuilder line, int width) {
+        padding(line, width, " ");
+    }
+    private void padding(StringBuilder line, int width, String fill) {
+        while (width > 0) {
+            line.append(fill);
+            width -= 1;
+        }
     }
 
     @TaskAction

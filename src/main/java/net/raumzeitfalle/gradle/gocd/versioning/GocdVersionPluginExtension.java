@@ -24,7 +24,7 @@ public class GocdVersionPluginExtension {
     }
 
     public void setTimestampPattern(String timestampPattern) {
-        if (timestampPattern == null || timestampPattern.isBlank()) {
+        if (timestampPattern == null || "".equalsIgnoreCase(timestampPattern.trim())) {
             this.timestampPattern = defaultTimestampPattern;
         } else {
             this.timestampPattern = timestampPattern;

@@ -22,7 +22,7 @@ public class GocdVersionBuilder {
     }
 
     private String checkProjectVersion(Object versionToCheck, String defaultVersion) {
-        if (null == versionToCheck || String.valueOf(versionToCheck).isBlank()) {
+        if (null == versionToCheck || "".equalsIgnoreCase(String.valueOf(versionToCheck).trim())) {
             return defaultVersion;
         }
         return versionToCheck.toString();

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -24,7 +25,7 @@ public class GocdVersionClosureTest {
     @Test
     void that_closure_is_correctly_wired_with_version_builder() {
 
-        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(Map.of(EnvironmentVariables.COMPUTERNAME.toString(), "HAL9000"));
+        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(mapOf(EnvironmentVariables.COMPUTERNAME, "HAL9000"));
 
         GocdVersionClosure closure = new GocdVersionClosure(env,ext, this);
 
@@ -38,8 +39,8 @@ public class GocdVersionClosureTest {
     @Test
     void that_auto_version_is_properly_generated_by_closure() {
 
-        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(Map.of(EnvironmentVariables.COMPUTERNAME.toString(), "HAL9000",
-                                                                           EnvironmentVariables.GO_PIPELINE_COUNTER.toString(), "123.1"));
+        Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(mapOf(EnvironmentVariables.COMPUTERNAME, "HAL9000",
+                                                                          EnvironmentVariables.GO_PIPELINE_COUNTER, "123.1"));
 
         GocdVersionClosure closure = new GocdVersionClosure(env,ext, this);
 
@@ -48,5 +49,19 @@ public class GocdVersionClosureTest {
         assertTrue(returnValue instanceof GocdVersionBuilder);
         assertEquals("AUTO-VERSION.123.1", ((GocdVersionBuilder) returnValue).build());
 
+    }
+    
+    private Map<String,String> mapOf(EnvironmentVariables variable, String value) {
+        Map<String,String> map = new HashMap<>();
+        map.put(variable.toString(), value);
+        return map;
+    }
+    
+    private Map<String,String> mapOf(EnvironmentVariables variable1, String value1,
+                                     EnvironmentVariables variable2, String value2) {
+        Map<String,String> map = new HashMap<>();
+        map.put(variable1.toString(), value1);
+        map.put(variable2.toString(), value2);
+        return map;
     }
 }

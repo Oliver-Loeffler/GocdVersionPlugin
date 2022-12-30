@@ -65,16 +65,16 @@ public class JPackageVersionBuilder {
 
     private String getDefaultVersion() {
         LocalDateTime date = extension.getTimestampSupplier().get();
-        var major = DateTimeFormatter.ofPattern("YY").format(date);
-        var minor = DateTimeFormatter.ofPattern("ww").format(date);
-        var patch = DateTimeFormatter.ofPattern("ee").format(date);
+        String major = DateTimeFormatter.ofPattern("YY").format(date);
+        String minor = DateTimeFormatter.ofPattern("ww").format(date);
+        String patch = DateTimeFormatter.ofPattern("ee").format(date);
         return major+"."+minor+"."+patch;
     }
     
     private String tagWithCommitDistVersion(LocalDate date, int commitDist) {
-        var major = DateTimeFormatter.ofPattern("YY").format(date);
-        var minor = DateTimeFormatter.ofPattern("ww").format(date);
-        var patch = Integer.toString(commitDist);
+        String major = DateTimeFormatter.ofPattern("YY").format(date);
+        String minor = DateTimeFormatter.ofPattern("ww").format(date);
+        String patch = Integer.toString(commitDist);
         return major+"."+minor+"."+patch;
     }
 }

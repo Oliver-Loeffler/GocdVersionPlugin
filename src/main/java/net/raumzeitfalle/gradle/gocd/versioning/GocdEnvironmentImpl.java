@@ -17,10 +17,10 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     @Override
     public void setEnvVariable(EnvironmentVariables variable, String value) {
         Objects.requireNonNull(variable, "variable must not be null");
-        if (value == null || value.isBlank()) {
+        if (value == null || "".equalsIgnoreCase(value.trim())) {
             environment.remove(variable.toString());
         } else {
-            environment.put(variable.toString(), value.strip());
+            environment.put(variable.toString(), value.trim());
         }
     }
 

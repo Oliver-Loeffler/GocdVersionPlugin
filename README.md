@@ -12,6 +12,8 @@ Depending on that, the project version identifier will be updated.
 
 There are no dependencies to other plugins.
 
+Version `0.0.1` works with Java-11 or newer, version `0.0.2` works again with Java-8 and newer.
+
 ## Combining Git with GoCD
 
 GoCD uses pipelines to build artifacts. Each pipeline has a unique and independent environment and the pipeline instances are also versioned as well using the  environment variable `GO_PIPELINE_COUNTER`. With that it is possible to use the build count including the number of attempts for each build/pipeline instance within a version number. 
@@ -26,7 +28,7 @@ As of now for a Java library the Gradle code (Groovy DSL) looks as follows:
 plugins {
     id "java-library"
     id "com.palantir.git-version" version "0.15.0"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.1'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.2'
 }
 
 # Git details are provided by git-version plugin

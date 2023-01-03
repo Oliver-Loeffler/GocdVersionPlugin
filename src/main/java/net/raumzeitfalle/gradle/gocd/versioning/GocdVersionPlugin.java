@@ -10,7 +10,7 @@ import groovy.lang.Closure;
 public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
 
     @SuppressWarnings("unused")
-    private static final String GROUP = "Versioning";
+    private static final String GROUP = "GOCD CI/CD";
 
     @SuppressWarnings("serial")
     @Override

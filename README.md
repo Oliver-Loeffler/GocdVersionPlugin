@@ -78,8 +78,12 @@ Using the `gocdVersion` closure the version schema can be configured.
 # Defaults
 gocdVersion {
     appendPipelineCounterToAutomatedBuilds = true
+    appendStageCounterToAutomatedBuilds = true
     appendComputerNameToLocalBuilds = true
     appendTimestampToLocalBuilds = true
+    
+    defaultTimestampPattern = "yyyyMMddHHmmss"
+    timestampPattern = "yyyyMMddHHmmss"
 }
 ```
 
@@ -90,14 +94,17 @@ The effective version number schema can be verified using the `printGocdEnvironm
 ---------------------------------------------------
 Gocd Pipeline Environment
 ---------------------------------------------------
-GO_PIPELINE_COUNTER       = 12.1
+GO_SERVER_URL             = http://192.168.1.2:8053
+GO_PIPELINE_GROUP_NAME    = engineering
+GO_ENVIRONMENT_NAME       = windows-java-20
+GO_TRIGGER_USER           = doejohn
+GO_AGENT_RESOURCES        = windows,java20,special
 GO_PIPELINE_NAME          = test-build
+GO_PIPELINE_COUNTER       = 12.1
 GO_PIPELINE_LABEL         = 1.12.1
 GO_STAGE_NAME             = build
 GO_STAGE_COUNTER          = 1
-GO_SERVER_URL             = http://192.168.1.2:8053
 GO_JOB_NAME               = build
-GO_TRIGGER_USER           = changes
 COMPUTERNAME              = ENIAC
 ---------------------------------------------------
 Project version           = 20220526.2.12.1

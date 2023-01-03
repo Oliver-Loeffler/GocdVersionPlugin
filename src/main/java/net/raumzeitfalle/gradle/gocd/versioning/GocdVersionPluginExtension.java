@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 public class GocdVersionPluginExtension {
 
     private String defaultTimestampPattern = "yyyyMMddHHmmss";
-    private String timestampPattern = defaultTimestampPattern;
+    private String timestampPattern = "yyyyMMddHHmmss";
     private Supplier<LocalDateTime> timestampSupplier = ()->LocalDateTime.now();
     private boolean appendPipelineCounterToAutomatedBuilds = true;
     private boolean appendStageCounterToAutomatedBuilds = true;

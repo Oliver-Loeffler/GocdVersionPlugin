@@ -28,8 +28,12 @@ public class GocdVersionClosure extends Closure {
     public GocdVersionBuilder doCall(Object autoBuildVersion, Object manualBuildVersion) {
         return new GocdVersionBuilder(project, environmentSupplier.get(),ext,manualBuildVersion,autoBuildVersion);
     }
-    
+
     public GocdVersionBuilder doCall(Object version) {
         return new GocdVersionBuilder(project, environmentSupplier.get(),ext,version,version);
+    }
+    
+    public GocdVersionBuilder doCall() {
+        return new GocdVersionBuilder(project, environmentSupplier.get(),ext);
     }
 }

@@ -1,11 +1,11 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
+import static net.raumzeitfalle.gradle.gocd.versioning.EnvMap.mapOf;
+import static net.raumzeitfalle.gradle.gocd.versioning.EnvMap.mapOf3;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import org.gradle.api.Project;
@@ -49,9 +49,9 @@ public class GocdVersionClosureTest {
     @Test
     void that_auto_version_is_properly_generated_by_closure() {
         Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(project, 
-                                                                    mapOf(GOCD.COMPUTERNAME,  "HAL9000",
-                                                                    GOCD.GO_PIPELINE_COUNTER, "123",
-                                                                    GOCD.GO_STAGE_COUNTER,    "1"));
+                                                                    mapOf3(GOCD.COMPUTERNAME,        "HAL9000",
+                                                                           GOCD.GO_PIPELINE_COUNTER, "123",
+                                                                           GOCD.GO_STAGE_COUNTER,    "1"));
 
         GocdVersionClosure closure = new GocdVersionClosure(project,env,ext, this);
 
@@ -60,20 +60,5 @@ public class GocdVersionClosureTest {
         assertTrue(returnValue instanceof GocdVersionBuilder);
         assertEquals("AUTO-VERSION.123.1", ((GocdVersionBuilder) returnValue).build());
     }
-    
-    private Map<String,String> mapOf(GOCD variable, String value) {
-        Map<String,String> map = new HashMap<>();
-        map.put(variable.toString(), value);
-        return map;
-    }
-    
-    private Map<String,String> mapOf(GOCD variable1, String value1,
-                                     GOCD variable2, String value2,
-                                     GOCD variable3, String value3) {
-        Map<String,String> map = new HashMap<>();
-        map.put(variable1.toString(), value1);
-        map.put(variable2.toString(), value2);
-        map.put(variable3.toString(), value3);
-        return map;
-    }
+
 }

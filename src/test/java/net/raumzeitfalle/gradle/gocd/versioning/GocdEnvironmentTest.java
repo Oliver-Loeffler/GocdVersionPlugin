@@ -1,12 +1,12 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
+import static net.raumzeitfalle.gradle.gocd.versioning.EnvMap.mapOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.api.Project;
@@ -94,11 +94,4 @@ public class GocdEnvironmentTest {
         String expected = InetAddress.getLocalHost().getHostName();
         assertEquals(expected, classUnderTest.getComputerName());
     }
-    
-    private Map<String,String> mapOf(GOCD variable, String value) {
-        Map<String,String> map = new HashMap<>();
-        map.put(variable.toString(), value);
-        return map;
-    }
-
 }

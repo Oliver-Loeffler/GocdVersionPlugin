@@ -3,6 +3,7 @@ package net.raumzeitfalle.gradle.gocd.versioning;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -18,6 +19,19 @@ public class GocdVersionBuilder {
     private final GocdVersionPluginExtension extension;
 
     private final Logger logger;
+    
+    private final Supplier<Object> projectVersion;
+    
+    public GocdVersionBuilder(Project project,
+            GocdEnvironment environment, 
+            GocdVersionPluginExtension extension) {
+            this.logger             = Objects.requireNonNull(project).getLogger();
+            this.gocdEnvironment    = Objects.requireNonNull(environment, "environment must not be null");
+            this.extension          = Objects.requireNonNull(extension, "extension must not be null");
+            this.projectVersion     = projectVersion(project);
+            this.manualBuildVersion = null;
+            this.autoBuildVersion = null;
+    }
 
     public GocdVersionBuilder(Project project,
                               GocdEnvironment environment, 
@@ -29,6 +43,18 @@ public class GocdVersionBuilder {
         this.manualBuildVersion = checkProjectVersion(manualBuildVersion, "undefined");
         this.autoBuildVersion   = checkProjectVersion(autoBuildVersion, this.manualBuildVersion);
         this.extension          = Objects.requireNonNull(extension, "extension must not be null");
+        this.projectVersion     = projectVersion(project);
+    }
+    
+    private Supplier<Object> projectVersion(Project project) {
+        return ()->{
+            Object version = project.getVersion();
+            if (null == version) {
+                project.getLogger()
+                       .error("There is no project version defined. When running gocdVersion() without arguments, ensure that a project version is specified!");
+            }
+          return version;  
+        };
     }
 
     private String checkProjectVersion(Object versionToCheck, String defaultVersion) {
@@ -39,9 +65,22 @@ public class GocdVersionBuilder {
     }
 
     public String build() {
+        String auto = autoBuildVersion;
+        String manual = manualBuildVersion;
+        
+        if (manualBuildVersion == null && autoBuildVersion == null) {
+            String projectVersion = String.valueOf(this.projectVersion.get());
+            auto = projectVersion;
+            manual = projectVersion;
+        }
+        
+        return createVersion(auto, manual);
+    }
+    
+    String createVersion(String autoVersion, String manualVersion) {
         StringBuilder versionBuilder = new StringBuilder();
         if (gocdEnvironment.isAutomatedBuild()) {
-            versionBuilder.append(autoBuildVersion);
+            versionBuilder.append(autoVersion);
             if(extension.getAppendPipelineCounterToAutomatedBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getPipelineCounter());
             }
@@ -51,7 +90,7 @@ public class GocdVersionBuilder {
             }
         } else {
             String formattedTimestamp = getFormattedTimestamp();
-            versionBuilder.append(manualBuildVersion);
+            versionBuilder.append(manualVersion);
             if (extension.getAppendComputerNameToLocalBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getComputerName());
             }

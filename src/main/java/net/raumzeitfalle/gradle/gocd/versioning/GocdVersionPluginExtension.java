@@ -52,6 +52,14 @@ public class GocdVersionPluginExtension {
         return appendStageCounterToAutomatedBuilds;
     }
 
+    /**
+     * Configures the plugin to the value of the GoCD pipeline stage counter to the automatically
+     * generated version number for automated builds. As the pipeline stage counter does not exist for
+     * local builds, this behavior only happens on GoCD build agents.
+     * 
+     * @param toggle if true, the counter of the current GoCD pipeline stage is appended to the
+     *               automatic version number.
+     */
     public void setAppendStageCounterToAutomatedBuilds(boolean toggle) {
         this.appendStageCounterToAutomatedBuilds = toggle;
     }
@@ -60,6 +68,14 @@ public class GocdVersionPluginExtension {
         return appendComputerNameToLocalBuilds;
     }
 
+    /**
+     * Configures the plugin to append the name of the host / computer where the build is executed an
+     * automatically generated version number when running outside GoCD. If the computer name cannot be
+     * determined, then the suffix {@code LOCALBUILD} is appended instead.
+     * 
+     * @param toggle if true, the name of the computer where the build is executed is appended to the
+     *               generated version number (separated by a period character).
+     */
     public void setAppendComputerNameToLocalBuilds(boolean toggle) {
         this.appendComputerNameToLocalBuilds = toggle;
     }
@@ -68,6 +84,13 @@ public class GocdVersionPluginExtension {
         return appendTimestampToLocalBuilds;
     }
 
+    /**
+     * Configures the plugin to append a time stamp to an automatically generated version number of
+     * local for (non-automatic) builds.
+     * 
+     * @param toggle if true, the generated time stamp for this particular build is appended to the
+     *               generated version number (separated by a period character).
+     */
     public void setAppendTimestampToLocalBuilds(boolean toggle) {
         this.appendTimestampToLocalBuilds = toggle;
     }

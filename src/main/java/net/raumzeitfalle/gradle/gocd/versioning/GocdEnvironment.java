@@ -10,6 +10,7 @@ public interface GocdEnvironment {
     List<String> getAgentResources();
     void setEnvVariable(GOCD variable, String value);
     
+    String getMaterialBranch(String materialName);
     String getPipelineLabel();
     String getPipelineName();
     int getPipelineCounter();

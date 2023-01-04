@@ -3,6 +3,7 @@ package net.raumzeitfalle.gradle.gocd.versioning;
 import static net.raumzeitfalle.gradle.gocd.versioning.EnvMap.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
@@ -108,5 +109,39 @@ class GocdPropertyClosuresTest<X> {
         classUnderTest = new GocdIsAutomatedBuildClosure(env, this);
         assertFalse((boolean) classUnderTest.call());
     }
+    
+    @Test
+    void that_a_material_branch_name_is_properly_returned_when_available() {
+        String materialName = "GITBUCKET";
+        String branchName = "production";
+        env = () -> new GocdEnvironmentImpl(project, 
+                                            mapOf(GOCD.GO_MATERIAL_BRANCH.toString()+"_"+materialName, branchName));
+        classUnderTest = new GocdMaterialBranchNameClosure(env, this);
+        assertEquals("production", classUnderTest.call(materialName));
+    }
 
+    @Test
+    void that_an_error_is_raised_when_material_name_is_null() {
+        String materialName = "GITBUCKET";
+        String branchName = "production";
+        env = () -> new GocdEnvironmentImpl(project, 
+                                            mapOf(GOCD.GO_MATERIAL_BRANCH.toString()+"_"+materialName, branchName));
+        classUnderTest = new GocdMaterialBranchNameClosure(env, this);
+        assertThrows(IllegalArgumentException.class, ()->classUnderTest.call((String) null));
+    }
+    
+    @Test
+    void that_an_error_is_raised_when_material_name_is_blank() {
+        env = () -> new GocdEnvironmentImpl(project,Collections.emptyMap());
+        classUnderTest = new GocdMaterialBranchNameClosure(env, this);
+        assertThrows(IllegalArgumentException.class, ()->classUnderTest.call(""));
+    }
+    
+    @Test
+    void that_material_branch_name_is_blank_string_when_not_defined_in_environment() {
+        env = () -> new GocdEnvironmentImpl(project,Collections.emptyMap());
+        classUnderTest = new GocdMaterialBranchNameClosure(env, this);
+        assertEquals("", classUnderTest.call("GITBUCKET"));
+    }
+       
 }

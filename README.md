@@ -138,6 +138,8 @@ println( gocdJobName() )
 println( gocdComputerName() )
 println( gocdTriggerUser() )
 println( isAutomatedBuild() )
+println( isAutomatedBuild() )
+println( gocdMaterialBranchName("GIT_MATERIAL_NAME") )
 ```
 
 ## License

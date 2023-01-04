@@ -102,6 +102,21 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         return triggerUser;
     }
     
+    @Override
+    public String getMaterialBranch(String materialName) {
+        if (null == materialName) {
+            throw new IllegalArgumentException("Please provide a correct GOCD material name. A material name must not be null!");
+            
+        }
+        
+        if ("".equalsIgnoreCase(materialName)) {
+            throw new IllegalArgumentException("Please provide a correct GOCD material name. A material name must not be blank!");
+        }
+        
+        return getEnvOrDefault(GOCD.GO_MATERIAL_BRANCH.toString()
+                              +"_"+String.valueOf(materialName).toUpperCase(), ()->"");
+    }
+    
     private String tryWhoami(Supplier<String> defaultUser) {
         try {
             return whoami(defaultUser);
@@ -186,7 +201,4 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     public String get(GOCD variable) {
         return getEnvOrDefault(variable, ()->"");
     }
-
-
-
 }

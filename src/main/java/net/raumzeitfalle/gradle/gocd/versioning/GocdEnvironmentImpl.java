@@ -1,5 +1,8 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -85,9 +88,42 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
 
     @Override
     public String getTriggerUser() {
-        return getEnvOrDefault(GOCD.GO_TRIGGER_USER, ()->"");
+        Supplier<String> defaultUser = ()->"";
+        String triggerUser = getEnvOrDefault(GOCD.GO_TRIGGER_USER, defaultUser);
+        if ("".equalsIgnoreCase(triggerUser)) {
+            if (environment.containsKey("USER")) {
+                triggerUser = environment.get("USER");
+            } else if (environment.containsKey("USERNAME")) {
+                triggerUser = environment.get("USERNAME");
+            } else {
+                triggerUser = tryWhoami(defaultUser);
+            }
+        }
+        return triggerUser;
     }
     
+    private String tryWhoami(Supplier<String> defaultUser) {
+        try {
+            return whoami(defaultUser);
+        } catch (IOException e) {
+            project.getLogger().warn("Failed to obtain user with execution of whoami command. Continuing with fallback.", e);
+        }
+        return defaultUser.get();
+    }
+    
+    private String whoami(Supplier<String> defaultUser) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("whoami");
+        Process process = pb.start();
+        String line = null;
+        try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
+             BufferedReader reader = new BufferedReader(isr)){
+            while ((line=reader.readLine()) != null) {
+                return line;
+            }
+            return defaultUser.get();
+        }
+    }
+
     @Override
     public List<String> getAgentResources() {
         String configuredResources = getEnvOrDefault(GOCD.GO_AGENT_RESOURCES, ()->"").trim();

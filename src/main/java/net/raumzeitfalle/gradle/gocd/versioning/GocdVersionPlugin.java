@@ -41,5 +41,6 @@ public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
         extras.set("gocdComputerName",      new ComputerNameClosure(environmentSupplier, this));
         extras.set("gocdStageName",         new GocdStageNameClosure(environmentSupplier, this));
         extras.set("gocdJobName",           new GocdJobNameClosure(environmentSupplier, this));
+        extras.set("gocdTriggerUser",       new GocdTriggerUserClosure(environmentSupplier, this));
     }
 }

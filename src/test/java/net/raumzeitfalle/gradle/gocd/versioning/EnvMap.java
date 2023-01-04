@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnvMap {
+    
+    public static Map<String, String> mapOf(String variable, String value) {
+        Map<String, String> map = new HashMap<>();
+        map.put(variable, value);
+        return map;
+    }
+    
     public static Map<String, String> mapOf(GOCD variable, String value) {
         Map<String, String> map = new HashMap<>();
         map.put(variable.toString(), value);

@@ -136,11 +136,12 @@ println( gocdStageName() )
 println( gocdStageCounter() )
 println( gocdJobName() )
 println( gocdComputerName() )
+println( gocdTriggerUser() )
 ```
 
 ## License
 
-Copyright 2021 Oliver Löffler
+Copyright 2021, 2022 Oliver Löffler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -3,6 +3,7 @@ package net.raumzeitfalle.gradle.gocd.versioning;
 import static net.raumzeitfalle.gradle.gocd.versioning.EnvMap.mapOf;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Collections;
 import java.util.function.Supplier;
 
 import org.gradle.api.Project;
@@ -59,6 +60,37 @@ class GocdPropertyClosuresTest<X> {
         env = () -> new GocdEnvironmentImpl(project, mapOf(GOCD.GO_STAGE_COUNTER, 17));
         classUnderTest = new GocdStageCounterClosure(env, this);
         assertEquals(17, classUnderTest.call());
+    }
+    
+    @Test
+    void that_trigger_user_is_available_from_closure() {
+        env = () -> new GocdEnvironmentImpl(project, mapOf(GOCD.GO_TRIGGER_USER, "root"));
+        classUnderTest = new GocdTriggerUserClosure(env, this);
+        assertEquals("root", classUnderTest.call());
+    }
+    
+    @Test
+    void that_trigger_user_refers_to_USERNAME_variable_when_TRIGGER_USER_variable_is_missing() {
+        env = () -> new GocdEnvironmentImpl(project, mapOf("USERNAME", "windowsroot"));
+        classUnderTest = new GocdTriggerUserClosure(env, this);
+        assertEquals("windowsroot", classUnderTest.call());
+    }
+    
+    @Test
+    void that_trigger_user_refers_to_USER_variable_when_TRIGGER_USER_variable_is_missing() {
+        env = () -> new GocdEnvironmentImpl(project, mapOf("USER", "otherroot"));
+        classUnderTest = new GocdTriggerUserClosure(env, this);
+        assertEquals("otherroot", classUnderTest.call());
+    }
+    
+    @Test
+    void that_trigger_user_refers_to_whoami_response_when_no_variables_are_defined() {
+        env = () -> new GocdEnvironmentImpl(project, Collections.emptyMap());
+        classUnderTest = new GocdTriggerUserClosure(env, this);
+        
+        Object determinedName = classUnderTest.call();
+        assertTrue(String.valueOf(determinedName).length() > 0);
+        assertFalse("".equalsIgnoreCase(String.valueOf(determinedName).trim()));
     }
 
 }

@@ -38,7 +38,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
 
     @Override
     public String getComputerName() {
-        return getEnvOrDefault("COMPUTERNAME", ()->fromHostName());
+        return getEnvOrDefault("COMPUTERNAME", ()->tryHostname(()->fromHostName()));
     }
     
     @Override
@@ -166,6 +166,28 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         }
     }
     
+    private String tryHostname(Supplier<String> defaultHostname) {
+        try {
+            return hostname(defaultHostname);
+        } catch (IOException e) {
+            project.getLogger().warn("Failed to obtain hostname with execution of hostname command. Continuing with fallback.", e);
+        }
+        return defaultHostname.get();
+    }
+    
+    private String hostname(Supplier<String> defaultHostname) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("hostname");
+        Process process = pb.start();
+        String line = null;
+        try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
+             BufferedReader reader = new BufferedReader(isr)){
+            while ((line=reader.readLine()) != null) {
+                return line;
+            }
+            return defaultHostname.get();
+        }
+    }
+
     private int fromEnvOrDefault(GOCD variable, int defaultValue) {
         String value = getEnvOrDefault(variable,
                                       ()->Integer.toString(defaultValue));
@@ -185,14 +207,11 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     private String getEnvOrDefault(String variable, Supplier<String> defaultValue) {
         String value = getenv(variable.toString());
         if (null == value) {
-            String template = "Environment variable \"%s\" nof found!";
-            project.getLogger().debug(String.format(template, variable));
-            return defaultValue.get();
+            String template = "Environment variable \"%s\" not found! Going with default value \"%s\"";
+            String fallback = defaultValue.get();
+            project.getLogger().debug(String.format(template, variable, fallback));
+            return fallback;
         } else {
-            if ("".equalsIgnoreCase(value)) {
-                String template = "Environment variable \"%s\" is configured with a blank String.";
-                project.getLogger().debug(String.format(template, variable));
-            }
             return  value;
         }
     }

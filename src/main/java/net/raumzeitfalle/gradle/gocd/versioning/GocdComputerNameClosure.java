@@ -5,19 +5,19 @@ import java.util.function.Supplier;
 import groovy.lang.Closure;
 
 @SuppressWarnings({"serial", "rawtypes"})
-public class GocdMaterialBranchNameClosure extends Closure {
+public class GocdComputerNameClosure extends Closure {
     
     private final Supplier<GocdEnvironment> environmentSupplier;
 
-    public GocdMaterialBranchNameClosure(Supplier<GocdEnvironment> environmentSupplier, Object owner) {
+    public GocdComputerNameClosure(Supplier<GocdEnvironment> environmentSupplier, Object owner) {
         super(owner);
         this.environmentSupplier = environmentSupplier;
     }
     
-    public String doCall(String materialName) {
+    public String doCall() {
         return this.environmentSupplier
                    .get()
-                   .getMaterialBranch(materialName);
+                   .getComputerName();
     }
     
 }

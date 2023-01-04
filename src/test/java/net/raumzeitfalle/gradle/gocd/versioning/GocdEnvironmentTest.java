@@ -94,4 +94,13 @@ public class GocdEnvironmentTest {
         String expected = InetAddress.getLocalHost().getHostName();
         assertEquals(expected, classUnderTest.getComputerName());
     }
+    
+    @Test
+    void that_variables_can_be_obtained_with_empty_string_as_default() {
+        myEnvironment = mapOf(GOCD.GO_STAGE_COUNTER,"NotANumber");
+        classUnderTest = new GocdEnvironmentImpl(project,myEnvironment);
+        
+        assertEquals("NotANumber", classUnderTest.get(GOCD.GO_STAGE_COUNTER));
+        assertEquals("", classUnderTest.get(GOCD.GO_PIPELINE_GROUP_NAME));
+    }
 }

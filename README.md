@@ -137,6 +137,7 @@ println( gocdStageCounter() )
 println( gocdJobName() )
 println( gocdComputerName() )
 println( gocdTriggerUser() )
+println( isAutomatedBuild() )
 ```
 
 ## License

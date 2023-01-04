@@ -1,7 +1,9 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
 import static net.raumzeitfalle.gradle.gocd.versioning.EnvMap.mapOf;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -91,6 +93,20 @@ class GocdPropertyClosuresTest<X> {
         Object determinedName = classUnderTest.call();
         assertTrue(String.valueOf(determinedName).length() > 0);
         assertFalse("".equalsIgnoreCase(String.valueOf(determinedName).trim()));
+    }
+    
+    @Test
+    void that_build_is_detected_as_automated_when_PGO_PIPELINE_COUNTER_variable_exists() {
+        env = () -> new GocdEnvironmentImpl(project, mapOf(GOCD.GO_PIPELINE_COUNTER, "17"));
+        classUnderTest = new GocdIsAutomatedBuildClosure(env, this);
+        assertTrue((boolean) classUnderTest.call());
+    }
+    
+    @Test
+    void that_build_is_detected_as_local_when_PGO_PIPELINE_COUNTER_variable_is_missing() {
+        env = () -> new GocdEnvironmentImpl(project, mapOf(GOCD.COMPUTERNAME, "ENIAC"));
+        classUnderTest = new GocdIsAutomatedBuildClosure(env, this);
+        assertFalse((boolean) classUnderTest.call());
     }
 
 }

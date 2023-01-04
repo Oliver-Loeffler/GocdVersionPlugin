@@ -17,6 +17,5 @@ public enum GOCD {
     
     GO_JOB_NAME,
     
-    // TODO: this exists on windows. How about mac or linux?
     COMPUTERNAME;
 }

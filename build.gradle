@@ -21,7 +21,7 @@ version = '0.0.6-SNAPSHOT'
 pluginBundle {
     website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'
     vcsUrl = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin.git'
-    tags = ['versioning', 'gocd' ,'ci/cd' ,'cruise-control']
+    tags = ['versioning', 'gocd' ,'ci/cd' ,'cruise-control' ,'ci', 'cd', 'cicd', 'continuous delivery']
 }
 
 gradlePlugin {

@@ -129,7 +129,8 @@ println(jpkgversion)
 
 ### Example 4, accessing GoCD environment variables in a Gradle build
 
-```
+```java
+
 println( gocdEnvironmentName() )
 println( gocdPipelineGroupName() )
 println( gocdPipelineName() )
@@ -144,6 +145,9 @@ println( isAutomatedBuild() )
 println( gocdGitMaterialBranchName("GIT_MATERIAL_NAME") )
 println( gocdComputerName() )
 println( gocdServerUrl() )
+println( gocdVersion() )
+println( gocdVersion("versionForAutomatedBuilds", "versionForManualBuilds") )
+
 ```
 
 ## License

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryBuilder;
@@ -55,7 +56,8 @@ public class GitTagVersionHelper {
                 for (RevCommit commit : commitlog) {
                     commitCount += 1;
                     if (tags.containsKey(commit.getId())) {
-                        tagName = tags.get(commit.getId());
+                        tagName = tags.get(commit.getId())
+                                      .replace(Constants.R_TAGS, "");
                         break;
                     }
                 }
@@ -96,6 +98,10 @@ public class GitTagVersionHelper {
         
         boolean isValid() {
             return commitCount > -1 && tagName != null && !"".equals(tagName);
+        }
+        
+        public String getTag() {
+            return tagName;
         }
                 
         public String map(GocdVersionPluginExtension extension) {

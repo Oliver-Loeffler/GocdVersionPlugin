@@ -20,14 +20,13 @@ public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
         project.getTasks().register("printGocdEnvironment", PrintGocdEnvironmentTask.class);
 
         Supplier<GocdEnvironment> environmentSupplier = ()->new GocdEnvironmentImpl(project, System.getenv());
-
         project.getExtensions().getExtraProperties().set("gocdEnvironment", new Closure<GocdEnvironment>(this,this)  {
             @SuppressWarnings("unused")
             public GocdEnvironment doCall(Object args) {
                 return environmentSupplier.get();
             }
         });
-
+        
         GocdVersionPluginExtension ext = project.getExtensions().getByType(GocdVersionPluginExtension.class);
         ExtraPropertiesExtension extras = project.getExtensions().getExtraProperties();
         extras.set("gocdVersion",               new GocdVersionClosure(project,environmentSupplier,ext,this));

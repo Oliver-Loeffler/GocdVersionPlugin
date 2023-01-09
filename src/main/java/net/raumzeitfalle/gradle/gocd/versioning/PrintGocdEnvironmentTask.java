@@ -27,6 +27,8 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
     String prepareMessage() {
         Object version = getProject().getVersion();
         GocdEnvironment env = environmentSupplier.apply(getProject());
+        GocdVersionPluginExtension ext = getProject().getExtensions()
+                                                     .getByType(GocdVersionPluginExtension.class);
        
         List<String> allItems = new ArrayList<>(); 
         Arrays.stream(GOCD.values())
@@ -36,9 +38,11 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
         String title = "Gocd Pipeline Environment";
         String projectVersion = "Project version";
         String isAutomatedBuild = "Is automated build?";
+        String auomatedGitVersion = "Automated Version using Git Tag";
         allItems.add(title);
         allItems.add(projectVersion);
         allItems.add(isAutomatedBuild);
+        allItems.add(auomatedGitVersion);
         
         int maxWidth = allItems.stream()
                                .mapToInt(String::length)
@@ -54,8 +58,16 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
             allLines.add(line.toString());
         }
         
+        String automatedVersion = new GitTagVersionHelper().getLatestTag()
+                .map(details->details.map(ext))
+                .orElseGet(()->{
+                    getProject().getLogger().warn("No git tag found, will use version as defined in build.gradle.");
+                    return String.valueOf(version);
+                });
+        
         allLines.add(padded(projectVersion, String.valueOf(version), maxWidth));
         allLines.add(padded(isAutomatedBuild, String.valueOf(env.isAutomatedBuild()), maxWidth));
+        allLines.add(padded(auomatedGitVersion, automatedVersion, maxWidth));
         maxWidth = allLines.stream()
                            .mapToInt(String::length)
                            .max()

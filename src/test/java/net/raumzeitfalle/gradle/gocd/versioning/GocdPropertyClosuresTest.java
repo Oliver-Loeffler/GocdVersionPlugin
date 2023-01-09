@@ -131,14 +131,14 @@ class GocdPropertyClosuresTest<X> {
     void that_build_is_detected_as_automated_when_GO_PIPELINE_COUNTER_variable_exists() {
         env = () -> new GocdEnvironmentImpl(project, mapOf(GOCD.GO_PIPELINE_COUNTER, "17"));
         classUnderTest = new GocdIsAutomatedBuildClosure(env, this);
-        assertTrue((boolean) classUnderTest.call());
+        assertTrue((Boolean) classUnderTest.call());
     }
     
     @Test
     void that_build_is_detected_as_local_when_GO_PIPELINE_COUNTER_variable_is_missing() {
         env = () -> new GocdEnvironmentImpl(project, Collections.emptyMap());
         classUnderTest = new GocdIsAutomatedBuildClosure(env, this);
-        assertFalse((boolean) classUnderTest.call());
+        assertFalse((Boolean) classUnderTest.call());
     }
     
     @Test

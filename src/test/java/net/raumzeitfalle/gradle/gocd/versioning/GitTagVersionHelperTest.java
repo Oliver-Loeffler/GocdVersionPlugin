@@ -19,6 +19,7 @@ class GitTagVersionHelperTest {
         classUnderTest = new GitTagVersionHelper();
         Optional<GitDetails> details = assertDoesNotThrow(()->classUnderTest.getLatestTag());
         assertTrue(details.isPresent());
+        assertFalse(details.get().getTag().startsWith("refs/tags/"));
     }
     
     @Test

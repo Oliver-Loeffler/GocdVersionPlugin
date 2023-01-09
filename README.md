@@ -41,6 +41,8 @@ In this example I've decided to go with the [gradle-git-version plugin](https://
 The idea is, that the PATCH version can be directly taken from Git history. One could `tag` a specific git commit with an appropriate `MAJOR.MINOR` value.
 The count of commits after the last `tag` then represents the `PATCH` version.
 
+As with version `0.0.6`, no 3rd party plugin is needed to obtain a version number from Git tag. When calling `gocdVersion()` without arguments, the plugin will attempt to obtain the latest Git tag and also commit distance to the head. Its not tested yet with all thinkable git scenarios - its very experimental.
+
 Approach:
 * declare `MAJOR.MINOR` using `git tag` command
 * use commit count after last `tag` as `PATCH` version

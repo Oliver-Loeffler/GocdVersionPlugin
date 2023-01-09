@@ -11,6 +11,7 @@ public class GocdVersionPluginExtension {
     private boolean appendStageCounterToAutomatedBuilds = true;
     private boolean appendComputerNameToLocalBuilds = true;
     private boolean appendTimestampToLocalBuilds = true;
+    private boolean appendGitCommitCountToGitTagVersion = true;
 
     public Supplier<LocalDateTime> getTimestampSupplier() {
         return timestampSupplier;
@@ -93,5 +94,13 @@ public class GocdVersionPluginExtension {
      */
     public void setAppendTimestampToLocalBuilds(boolean toggle) {
         this.appendTimestampToLocalBuilds = toggle;
+    }
+    
+    public boolean getAppendGitCommitCountToGitTagVersion() {
+        return appendGitCommitCountToGitTagVersion;
+    }
+
+    public void setAppendGitCommitCountToGitTagVersion(boolean toggle) {
+        this.appendGitCommitCountToGitTagVersion = toggle;
     }
 }

@@ -69,11 +69,12 @@ public class GocdVersionBuilder {
         String manual = manualBuildVersion;
         
         if (manualBuildVersion == null && autoBuildVersion == null) {
-            String projectVersion = String.valueOf(this.projectVersion.get());
+            String projectVersion = new GitTagVersionHelper().getLatestTag()
+                                                             .map(details->details.map(extension))
+                                                             .orElseGet(()->String.valueOf(this.projectVersion.get()));
             auto = projectVersion;
             manual = projectVersion;
-        }
-        
+        }        
         return createVersion(auto, manual);
     }
     

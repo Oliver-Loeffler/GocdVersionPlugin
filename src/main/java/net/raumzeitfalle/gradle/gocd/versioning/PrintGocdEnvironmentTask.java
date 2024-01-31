@@ -58,7 +58,7 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
             allLines.add(line.toString());
         }
         
-        String automatedVersion = new GitTagVersionHelper().getLatestTag()
+        String automatedVersion = new GitTagVersionHelper(getProject().getLogger()).getLatestTag()
                 .map(details->details.map(ext))
                 .orElseGet(()->{
                     getProject().getLogger().warn("No git tag found, will use version as defined in build.gradle.");

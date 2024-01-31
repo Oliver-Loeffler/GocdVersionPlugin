@@ -12,7 +12,8 @@ public class GocdVersionPluginExtension {
     private boolean appendComputerNameToLocalBuilds = true;
     private boolean appendTimestampToLocalBuilds = true;
     private boolean appendGitCommitCountToGitTagVersion = true;
-
+    private String  missingGitCommitFallbackTag = "<notag>";
+    
     public Supplier<LocalDateTime> getTimestampSupplier() {
         return timestampSupplier;
     }
@@ -102,5 +103,17 @@ public class GocdVersionPluginExtension {
 
     public void setAppendGitCommitCountToGitTagVersion(boolean toggle) {
         this.appendGitCommitCountToGitTagVersion = toggle;
+    }
+    
+    public String getMissingGitCommitFallbackTag() {
+        return missingGitCommitFallbackTag;
+    }
+
+    public void setMissingGitCommitFallbackTag(String fallbackTag) {
+        if (fallbackTag == null) {
+            this.missingGitCommitFallbackTag = "<notag>";
+        } else {
+            this.missingGitCommitFallbackTag = fallbackTag;
+        }
     }
 }

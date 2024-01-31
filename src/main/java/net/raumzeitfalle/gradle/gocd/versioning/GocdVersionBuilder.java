@@ -1,5 +1,6 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -21,6 +22,8 @@ public class GocdVersionBuilder {
     private final Logger logger;
     
     private final Supplier<Object> projectVersion;
+
+    private final Path buildFilePath;
     
     public GocdVersionBuilder(Project project,
             GocdEnvironment environment, 
@@ -30,7 +33,8 @@ public class GocdVersionBuilder {
             this.extension          = Objects.requireNonNull(extension, "extension must not be null");
             this.projectVersion     = projectVersion(project);
             this.manualBuildVersion = null;
-            this.autoBuildVersion = null;
+            this.autoBuildVersion   = null;
+            this.buildFilePath      = Objects.requireNonNull(project).getBuildFile().toPath().getParent();
     }
 
     public GocdVersionBuilder(Project project,
@@ -44,6 +48,7 @@ public class GocdVersionBuilder {
         this.autoBuildVersion   = checkProjectVersion(autoBuildVersion, this.manualBuildVersion);
         this.extension          = Objects.requireNonNull(extension, "extension must not be null");
         this.projectVersion     = projectVersion(project);
+        this.buildFilePath      = Objects.requireNonNull(project).getBuildFile().toPath().getParent();
     }
     
     private Supplier<Object> projectVersion(Project project) {
@@ -69,12 +74,13 @@ public class GocdVersionBuilder {
         String manual = manualBuildVersion;
         
         if (manualBuildVersion == null && autoBuildVersion == null) {
-            String projectVersion = new GitTagVersionHelper().getLatestTag()
-                                                             .map(details->details.map(extension))
-                                                             .orElseGet(()->String.valueOf(this.projectVersion.get()));
+            String projectVersion = new GitTagVersionHelper(this.logger, this.buildFilePath)
+                                                        .getLatestTag()
+                                                        .map(details->details.map(this.extension))
+                                                        .orElseGet(()->String.valueOf(this.projectVersion.get()));
             auto = projectVersion;
             manual = projectVersion;
-        }        
+        }
         return createVersion(auto, manual);
     }
     

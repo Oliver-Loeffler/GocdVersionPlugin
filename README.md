@@ -27,7 +27,7 @@ plugins {
     id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.8'
 }
 
-# Git details are provided by git-version plugin
+// Git details are provided by git-version plugin
 version = gocdVersion(versionDetails().lastTag+'.'+versionDetails().commitDistance,
                       versionDetails().lastTag+'.'+versionDetails().commitDistance+'-'+versionDetails().gitHash).build()
 ```
@@ -73,7 +73,7 @@ Using the `gocdVersion` closure the version schema can be configured.
 
 ```groovy
 
-# Defaults
+// Defaults
 gocdVersion {
     appendPipelineCounterToAutomatedBuilds = true
     appendStageCounterToAutomatedBuilds = true
@@ -127,7 +127,7 @@ println(jpkgversion)
 
 ### Example 4, accessing GoCD environment variables and Git tag in a Gradle build
 
-```java
+```groovy
 
 println( gocdEnvironmentName() )
 println( gocdPipelineGroupName() )
@@ -154,7 +154,7 @@ println( gocdVersion("versionForAutomatedBuilds", "versionForManualBuilds") )
 * Version schema: `git tag`.`commit count since tag` (e.g. `1.0.9`)
 * The nice thing is now, that no other plug in is needed and it now works for sub-projects as well.
 
-```java
+```groovy
 buildscript {
   repositories {
       mavenLocal()

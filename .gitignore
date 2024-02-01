@@ -5,4 +5,5 @@
 /.project/
 /bin/
 /build/
-/target/
+/target/.idea/ 
+/.idea/ 

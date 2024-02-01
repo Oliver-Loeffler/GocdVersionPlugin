@@ -49,7 +49,7 @@ So the effective version for a project can be different for atomated builds and 
 
 With the configuration in the example, the created version number looks as follows:
 
-#### Example 1, automated build in a GoCD pipeline
+### Example 1, automated build in a GoCD pipeline
 * git tag such as `1.0` exists
 * there are NO commits behind `1.0`, the commit distance is 0
 * the build is executed in a GoCD pipeline with `GO_PIPELINE_COUNTER=153.1`):
@@ -59,7 +59,7 @@ With the configuration in the example, the created version number looks as follo
 version = 1.0.0.153.1
 ```
 
-#### Example 2, manual (local) build on developer machine
+### Example 2, manual (local) build on developer machine
 * git tag such as `1.0` exists
 * there are NO commits behind `1.0`, the commit distance is 0
 * the build is executed on a computer with name ENIAC, there is no environment variable `GO_PIPELINE_COUNTER=xyz`):
@@ -114,7 +114,7 @@ Automated Version using Git Tag = 20220526.2
 
 ```
 
-#### Example 3, generating a MSI/WIX compatible version number from Git tag
+### Example 3, generating a MSI/WIX compatible version number from Git tag
 * git tag such as `20220930` exists
 * there were 12 commits after the tag, so the commit distance is 12
 

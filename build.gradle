@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '1.1.0'
+    id 'com.gradle.plugin-publish' version '1.2.1'
 }
 
 repositories {
@@ -16,7 +16,7 @@ java {
 }
 
 group = 'net.raumzeitfalle.gradle.gocd'
-version = '0.0.7-SNAPSHOT'
+version = '0.0.7'
 
 pluginBundle {
     website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'
@@ -39,10 +39,10 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.13.1.202206130422-r'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.13.3.202401111512-r'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
 }
 
 test {

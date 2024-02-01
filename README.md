@@ -86,6 +86,8 @@ gocdVersion {
     
     defaultTimestampPattern = "yyyyMMddHHmmss"
     timestampPattern = "yyyyMMddHHmmss"
+
+    missingGitCommitFallbackTag = "<notag>"
 }
 ```
 
@@ -127,13 +129,14 @@ println(jpkgversion)
 22.39.12
 ```
 
-### Example 4, accessing GoCD environment variables in a Gradle build
+### Example 4, accessing GoCD environment variables and Git tag in a Gradle build
 
 ```java
 
 println( gocdEnvironmentName() )
 println( gocdPipelineGroupName() )
 println( gocdPipelineName() )
+println( gitTagVersion() )
 println( gocdPipelineCounter() )
 println( gocdPipelineLabel() )
 println( gocdStageName() )
@@ -150,9 +153,47 @@ println( gocdVersion("versionForAutomatedBuilds", "versionForManualBuilds") )
 
 ```
 
+### Example 5, simples way to get an automatic version number from Git tag
+
+* Version schema: `git tag`.`commit count since tag` (e.g. `1.0.9`)
+* The nice thing is now, that no other plug in is needed and it now works for sub-projects as well.
+
+```java
+buildscript {
+  repositories {
+      mavenLocal()
+  }
+  dependencies {
+      classpath 'net.raumzeitfalle.gradle.gocd:GocdVersionPlugin:0.0.7'
+  }
+}
+
+plugins {
+    id 'java-library'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.7'
+}
+
+version = gocdVersion().build()
+println("Automatic version=" + version)
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:30.1.1-jre'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+```
+
 ## License
 
-Copyright 2021, 2022 Oliver Löffler
+Copyright 2021, 2024 Oliver Löffler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

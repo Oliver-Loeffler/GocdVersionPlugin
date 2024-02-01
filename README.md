@@ -1,11 +1,7 @@
-# Project Idea: GocdVersionPlugin for Gradle
+# GocdVersionPlugin for Gradle
 
-Warning, this is very experimental and not meant to be used in production environments.
-It is also tailored for a special use case and for me it is a learning experience on how Gradle plugins work.
-
-When continuous delivery is used, it can be valuable to have reliable version numbers which include the _commit ID_ and a _build ID_ pointing to a certain status in source code history and build pipeline run.
-
-This can be achieved by using the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version). In some cases, one would like to distinguish between local builds (e.g. performed on a developer PC) and automated builds in a CI/CD environment - this is the task of this plugin. 
+Auto-generating version numbers for GoCD automated builds from Git tags.
+----
 
 This plugin has the purpose to work with GoCD in order to detect if a build runs in a GoCD pipeline on a GoCD build agent.
 Depending on that, the project version identifier will be updated.
@@ -53,7 +49,7 @@ So the effective version for a project can be different for atomated builds and 
 
 With the configuration in the example, the created version number looks as follows:
 
-#### Example 1, automated build in a GoCD pipeline
+### Example 1, automated build in a GoCD pipeline
 * git tag such as `1.0` exists
 * there are NO commits behind `1.0`, the commit distance is 0
 * the build is executed in a GoCD pipeline with `GO_PIPELINE_COUNTER=153.1`):
@@ -63,7 +59,7 @@ With the configuration in the example, the created version number looks as follo
 version = 1.0.0.153.1
 ```
 
-#### Example 2, manual (local) build on developer machine
+### Example 2, manual (local) build on developer machine
 * git tag such as `1.0` exists
 * there are NO commits behind `1.0`, the commit distance is 0
 * the build is executed on a computer with name ENIAC, there is no environment variable `GO_PIPELINE_COUNTER=xyz`):
@@ -118,7 +114,7 @@ Automated Version using Git Tag = 20220526.2
 
 ```
 
-#### Example 3, generating a MSI/WIX compatible version number from Git tag
+### Example 3, generating a MSI/WIX compatible version number from Git tag
 * git tag such as `20220930` exists
 * there were 12 commits after the tag, so the commit distance is 12
 
@@ -153,7 +149,7 @@ println( gocdVersion("versionForAutomatedBuilds", "versionForManualBuilds") )
 
 ```
 
-### Example 5, simples way to get an automatic version number from Git tag
+### Example 5, simplest way to get an automatic version number from Git tag
 
 * Version schema: `git tag`.`commit count since tag` (e.g. `1.0.9`)
 * The nice thing is now, that no other plug in is needed and it now works for sub-projects as well.

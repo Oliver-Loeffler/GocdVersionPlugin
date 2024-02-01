@@ -86,6 +86,8 @@ gocdVersion {
     
     defaultTimestampPattern = "yyyyMMddHHmmss"
     timestampPattern = "yyyyMMddHHmmss"
+
+    missingGitCommitFallbackTag = "<notag>"
 }
 ```
 
@@ -127,13 +129,14 @@ println(jpkgversion)
 22.39.12
 ```
 
-### Example 4, accessing GoCD environment variables in a Gradle build
+### Example 4, accessing GoCD environment variables and Git tag in a Gradle build
 
 ```java
 
 println( gocdEnvironmentName() )
 println( gocdPipelineGroupName() )
 println( gocdPipelineName() )
+println( gitTagVersion() )
 println( gocdPipelineCounter() )
 println( gocdPipelineLabel() )
 println( gocdStageName() )
@@ -152,7 +155,7 @@ println( gocdVersion("versionForAutomatedBuilds", "versionForManualBuilds") )
 
 ## License
 
-Copyright 2021, 2022 Oliver Löffler
+Copyright 2021, 2024 Oliver Löffler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

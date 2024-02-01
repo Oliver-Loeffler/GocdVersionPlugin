@@ -21,6 +21,7 @@ import org.eclipse.jgit.lib.RepositoryBuilder;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.gradle.api.logging.Logger;
 
+
 public class GitTagVersionHelper {
     
     private final Logger logger;

@@ -1,11 +1,7 @@
-# Project Idea: GocdVersionPlugin for Gradle
+# GocdVersionPlugin for Gradle
 
-Warning, this is very experimental and not meant to be used in production environments.
-It is also tailored for a special use case and for me it is a learning experience on how Gradle plugins work.
-
-When continuous delivery is used, it can be valuable to have reliable version numbers which include the _commit ID_ and a _build ID_ pointing to a certain status in source code history and build pipeline run.
-
-This can be achieved by using the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version). In some cases, one would like to distinguish between local builds (e.g. performed on a developer PC) and automated builds in a CI/CD environment - this is the task of this plugin. 
+Auto-generating version numbers for GoCD automated builds from Git tags.
+----
 
 This plugin has the purpose to work with GoCD in order to detect if a build runs in a GoCD pipeline on a GoCD build agent.
 Depending on that, the project version identifier will be updated.

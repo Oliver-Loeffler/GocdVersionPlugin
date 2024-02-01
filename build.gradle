@@ -16,7 +16,7 @@ java {
 }
 
 group = 'net.raumzeitfalle.gradle.gocd'
-version = '0.0.8-SNAPSHOT'
+version = '0.0.8'
 
 pluginBundle {
     website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'

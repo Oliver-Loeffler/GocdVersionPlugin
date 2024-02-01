@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.gradle.api.Project;
@@ -20,45 +21,49 @@ public class GocdVersionBuilder {
     private final GocdVersionPluginExtension extension;
 
     private final Logger logger;
-    
+
     private final Supplier<Object> projectVersion;
 
     private final Path buildFilePath;
-    
+
     public GocdVersionBuilder(Project project,
-            GocdEnvironment environment, 
-            GocdVersionPluginExtension extension) {
-            this.logger             = Objects.requireNonNull(project).getLogger();
-            this.gocdEnvironment    = Objects.requireNonNull(environment, "environment must not be null");
-            this.extension          = Objects.requireNonNull(extension, "extension must not be null");
-            this.projectVersion     = projectVersion(project);
-            this.manualBuildVersion = null;
-            this.autoBuildVersion   = null;
-            this.buildFilePath      = Objects.requireNonNull(project).getBuildFile().toPath().getParent();
+                              GocdEnvironment environment,
+                              GocdVersionPluginExtension extension) {
+        this.logger = Objects.requireNonNull(project).getLogger();
+        this.gocdEnvironment = Objects.requireNonNull(environment, "environment must not be null");
+        this.extension = Objects.requireNonNull(extension, "extension must not be null");
+        this.projectVersion = projectVersion(project);
+        this.manualBuildVersion = null;
+        this.autoBuildVersion = null;
+        this.buildFilePath = Objects.requireNonNull(project).getBuildFile().toPath().getParent();
     }
 
     public GocdVersionBuilder(Project project,
-                              GocdEnvironment environment, 
-                              GocdVersionPluginExtension extension, 
-                              Object manualBuildVersion, 
+                              GocdEnvironment environment,
+                              GocdVersionPluginExtension extension,
+                              Object manualBuildVersion,
                               Object autoBuildVersion) {
-        this.logger             = Objects.requireNonNull(project).getLogger();
-        this.gocdEnvironment    = Objects.requireNonNull(environment, "environment must not be null");
+        this.logger = Objects.requireNonNull(project).getLogger();
+        this.gocdEnvironment = Objects.requireNonNull(environment, "environment must not be null");
         this.manualBuildVersion = checkProjectVersion(manualBuildVersion, "undefined");
-        this.autoBuildVersion   = checkProjectVersion(autoBuildVersion, this.manualBuildVersion);
-        this.extension          = Objects.requireNonNull(extension, "extension must not be null");
-        this.projectVersion     = projectVersion(project);
-        this.buildFilePath      = Objects.requireNonNull(project).getBuildFile().toPath().getParent();
+        this.autoBuildVersion = checkProjectVersion(autoBuildVersion, this.manualBuildVersion);
+        this.extension = Objects.requireNonNull(extension, "extension must not be null");
+        this.projectVersion = projectVersion(project);
+        this.buildFilePath = Objects.requireNonNull(project).getBuildFile().toPath().getParent();
     }
-    
+
     private Supplier<Object> projectVersion(Project project) {
-        return ()->{
+        return () -> {
             Object version = project.getVersion();
             if (null == version) {
                 project.getLogger()
-                       .error("There is no project version defined. When running gocdVersion() without arguments, ensure that a project version is specified!");
+                        .warn("There is no project version defined. When running gocdVersion() without arguments, ensure that a project version is specified!");
             }
-          return version;  
+            if ("unspecified".equalsIgnoreCase(String.valueOf(version).trim().toLowerCase())) {
+                project.getLogger()
+                        .warn("The project version is unspecified. When running gocdVersion() without arguments, ensure that a project version is specified!");
+            }
+            return version;
         };
     }
 
@@ -72,27 +77,41 @@ public class GocdVersionBuilder {
     public String build() {
         String auto = autoBuildVersion;
         String manual = manualBuildVersion;
-        
+
         if (manualBuildVersion == null && autoBuildVersion == null) {
+            String gradleProjectVersion = getProjectVersionWithFallback();
             String projectVersion = new GitTagVersionHelper(this.logger, this.buildFilePath)
-                                                        .getLatestTag()
-                                                        .map(details->details.map(this.extension))
-                                                        .orElseGet(()->String.valueOf(this.projectVersion.get()));
+                    .getLatestTag()
+                    .map(details -> details.map(this.extension))
+                    .orElseGet(() -> gradleProjectVersion);
             auto = projectVersion;
             manual = projectVersion;
         }
         return createVersion(auto, manual);
     }
-    
+
+    private String getProjectVersionWithFallback() {
+        String gradleProjectVersion = String.valueOf(this.projectVersion.get()).trim();
+        if (null == gradleProjectVersion || "unspecified".equalsIgnoreCase(gradleProjectVersion.toLowerCase())) {
+            GitTagVersionHelper gitHelper = new GitTagVersionHelper(this.logger, this.buildFilePath);
+            Optional<GitTagVersionHelper.GitDetails> gitDetails = gitHelper.getLatestCommit();
+            if (gitDetails.isPresent()) {
+                GitTagVersionHelper.GitDetails details = gitDetails.get();
+                gradleProjectVersion = details.getShortCommitName();
+            }
+        }
+        return gradleProjectVersion;
+    }
+
     String createVersion(String autoVersion, String manualVersion) {
         StringBuilder versionBuilder = new StringBuilder();
         if (gocdEnvironment.isAutomatedBuild()) {
             versionBuilder.append(autoVersion);
-            if(extension.getAppendPipelineCounterToAutomatedBuilds()) {
+            if (extension.getAppendPipelineCounterToAutomatedBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getPipelineCounter());
             }
-            
-            if(extension.getAppendStageCounterToAutomatedBuilds()) {
+
+            if (extension.getAppendStageCounterToAutomatedBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getStageCounter());
             }
         } else {
@@ -110,8 +129,8 @@ public class GocdVersionBuilder {
     }
 
     private String getFormattedTimestamp() {
-        String timestampPattern     = extension.getTimestampPattern();
-        LocalDateTime timestamp     = extension.getTimestampSupplier().get();
+        String timestampPattern = extension.getTimestampPattern();
+        LocalDateTime timestamp = extension.getTimestampSupplier().get();
         DateTimeFormatter formatter = getDateTimeFormatter(timestampPattern);
         return timestamp.format(formatter);
     }
@@ -121,8 +140,8 @@ public class GocdVersionBuilder {
             return DateTimeFormatter.ofPattern(timestampPattern);
         } catch (IllegalArgumentException formatError) {
             String defaultPattern = extension.getDefaultTimestampPattern();
-            String template = "Failed to pares date time from String using pattern %s. Continuing with default pattern %s."; 
-            logger.debug(String.format(template, timestampPattern, defaultPattern)); 
+            String template = "Failed to pares date time from String using pattern %s. Continuing with default pattern %s.";
+            logger.debug(String.format(template, timestampPattern, defaultPattern));
             return DateTimeFormatter.ofPattern(defaultPattern);
         }
     }

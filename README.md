@@ -153,7 +153,7 @@ println( gocdVersion("versionForAutomatedBuilds", "versionForManualBuilds") )
 
 ```
 
-### Example 5, simples way to get an automatic version number from Git tag
+### Example 5, simplest way to get an automatic version number from Git tag
 
 * Version schema: `git tag`.`commit count since tag` (e.g. `1.0.9`)
 * The nice thing is now, that no other plug in is needed and it now works for sub-projects as well.

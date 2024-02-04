@@ -29,6 +29,7 @@ public class GitTagLongVersionClosure extends Closure {
         Path buildFilePath = this.project.getBuildFile().toPath().getParent();
         logger.lifecycle("Build file path: {}", buildFilePath);
         GitTagVersionHelper gitTagHelper = new GitTagVersionHelper(logger, buildFilePath);
+        gitTagHelper.setMissingTagFallback(this.ext.getMissingTagVersionDefault());
         Optional<GitDetails> latestTag = gitTagHelper.getLatestTag();
 
         StringBuilder versionBuilder = new StringBuilder();
@@ -39,7 +40,7 @@ public class GitTagLongVersionClosure extends Closure {
             versionBuilder.append(details.getTag())
                     .append(".")
                     .append(details.getCommitCount())
-                    .append(".")
+                    .append("-")
                     .append(details.getShortCommitName());
             return versionBuilder.toString();
         }

@@ -24,6 +24,7 @@ public class GocdVersionClosureTest {
     public static void prepareProject() {
         project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("net.raumzeitfalle.gradle.gocdversion");
+        System.out.println(project.getProjectDir());
     }
     
     @BeforeEach

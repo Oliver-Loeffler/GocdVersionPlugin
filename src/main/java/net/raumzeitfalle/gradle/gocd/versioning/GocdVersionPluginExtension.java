@@ -1,5 +1,6 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class GocdVersionPluginExtension {
@@ -13,7 +14,8 @@ public class GocdVersionPluginExtension {
     private boolean appendTimestampToLocalBuilds = true;
     private boolean appendGitCommitCountToGitTagVersion = true;
     private String  missingGitCommitFallbackTag = "<notag>";
-    
+
+    private String  missingGitTagVersionDefault = "0.0";
     public Supplier<LocalDateTime> getTimestampSupplier() {
         return timestampSupplier;
     }
@@ -115,5 +117,14 @@ public class GocdVersionPluginExtension {
         } else {
             this.missingGitCommitFallbackTag = fallbackTag;
         }
+    }
+
+    public void setMissingTagVersionDefault(String defaultVersionForMissingTags) {
+        Objects.requireNonNull(defaultVersionForMissingTags, "Default for missing tags must not be null!");
+        this.missingGitTagVersionDefault = defaultVersionForMissingTags;
+    }
+
+    public String getMissingTagVersionDefault() {
+        return missingGitTagVersionDefault;
     }
 }

@@ -4,20 +4,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.RepositoryBuilder;
+import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.gradle.api.logging.Logger;
 
@@ -27,7 +17,10 @@ public class GitTagVersionHelper {
     private final Logger logger;
     
     private Path workingDir;
-    
+
+    private Path gitDir;
+    private String missingTagFallback;
+
     GitTagVersionHelper(Logger logger) {
         this(logger, Paths.get("."));
     }
@@ -35,6 +28,8 @@ public class GitTagVersionHelper {
     GitTagVersionHelper(Logger logger, Path workingDir) {
         this.workingDir = workingDir;
         this.logger = logger;
+        this.gitDir = null;
+        this.missingTagFallback = "0.0";
     }
 
     private void logError(String errorMessage, Throwable throwable) {
@@ -60,7 +55,7 @@ public class GitTagVersionHelper {
         if (null == repo) {
             return Optional.empty();
         }
-        logInfo("Found .git in: {}", this.workingDir.toAbsolutePath().normalize());
+        logInfo("Found .git in: {}", this.gitDir);
 
         String currentBranch = getBranchName(repo);
         if (null == currentBranch) {
@@ -79,7 +74,7 @@ public class GitTagVersionHelper {
         if (null == repo) {
             return Optional.empty();
         }
-        logInfo("Found .git in: {}", this.workingDir.toAbsolutePath().normalize());
+        logInfo("Found .git in: {}", this.gitDir);
         
         String currentBranch = getBranchName(repo);
         if (null == currentBranch) {
@@ -116,18 +111,45 @@ public class GitTagVersionHelper {
             List<Ref> refs = repo.getRefDatabase().getRefsByPrefix(Constants.R_TAGS);
             refs.forEach(ref->tags.put(ref.getObjectId(), ref.getName()));
             if (!tags.isEmpty()) {
+                Map<AnyObjectId, Set<Ref>> peeledIdsByRefs = repo.getAllRefsByPeeledObjectId();
                 Iterable<RevCommit> commitlog = git.log().add(repo.resolve(branch)).call();
-                commitCount = 0;
                 for (RevCommit commit : commitlog) {
                     commitCount += 1;
                     if (lastCommit == null) {
                         lastCommit = commit;
                     }
-                    if (tags.containsKey(commit.getId())) {
-                        tagName = tags.get(commit.getId())
-                                      .replace(Constants.R_TAGS, "");
+
+                    Set<Ref> relatedRefs = peeledIdsByRefs.get(commit.getId());
+                    if (relatedRefs != null) {
+                        for (Ref ref : relatedRefs) {
+                            String relatedTag = tags.get(ref.getObjectId());
+                            if (relatedTag != null) {
+                                tagName = relatedTag.replace(Constants.R_TAGS, "");
+                                break;
+                            }
+                        }
+                    }
+
+                    if (tagName == null) {
+                        if (tags.containsKey(commit.getId())) {
+                            tagName = tags.get(commit.getId())
+                                    .replace(Constants.R_TAGS, "");
+                            break;
+                        }
+                    }
+
+                    if (tagName != null) {
                         break;
                     }
+                }
+            } else {
+                Iterable<RevCommit> commitlog = git.log().add(repo.resolve(branch)).call();
+                for (RevCommit commit : commitlog) {
+                    tagName = this.missingTagFallback;
+                    if (lastCommit == null) {
+                        lastCommit = commit;
+                    }
+                    commitCount += 1;
                 }
             }
         } catch (Exception error) {
@@ -152,12 +174,19 @@ public class GitTagVersionHelper {
         try {
             Repository repo = new RepositoryBuilder().findGitDir(workingDir.toFile())
                                           .readEnvironment()
+                                          .setMustExist(true)
                                           .build();
+            this.gitDir = repo.getDirectory().toPath().toAbsolutePath();
             return repo;
         } catch (Exception error) {
             logWarn("Could not find a valid .git repository!");
             return null;
         }
+    }
+
+    void setMissingTagFallback(String missingTagVersionDefault) {
+        Objects.requireNonNull(missingTagVersionDefault, "missing tag version default must never be null!");
+        this.missingTagFallback = missingTagVersionDefault;
     }
 
     static class GitDetails {

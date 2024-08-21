@@ -8,8 +8,8 @@ public class GocdVersionPluginExtension {
     private String defaultTimestampPattern = "yyyyMMddHHmmss";
     private String timestampPattern = "yyyyMMddHHmmss";
     private Supplier<LocalDateTime> timestampSupplier = ()->LocalDateTime.now();
-    private boolean appendPipelineCounterToAutomatedBuilds = true;
-    private boolean appendStageCounterToAutomatedBuilds = true;
+    private boolean appendPipelineCounterToAutomatedBuilds = false;
+    private boolean appendStageCounterToAutomatedBuilds = false;
     private boolean appendComputerNameToLocalBuilds = true;
     private boolean appendTimestampToLocalBuilds = true;
     private boolean appendGitCommitCountToGitTagVersion = true;

@@ -19,17 +19,17 @@ group = 'net.raumzeitfalle.gradle.gocd'
 version = '0.0.11-SNAPSHOT'
 
 pluginBundle {
-    website = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin'
-    vcsUrl = 'https://github.com/Oliver-Loeffler/GocdVersionPlugin.git'
-    tags = ['versioning', 'gocd' ,'ci/cd' ,'cruise-control' ,'ci', 'cd', 'cicd', 'continuous delivery']
+    website = 'https://codeberg.org/Oliver-Loeffler/GocdVersionPlugin'
+    vcsUrl = 'https://codeberg.org/Oliver-Loeffler/GocdVersionPlugin.git'
+    tags = ['versioning', 'gocd' ,'ci/cd' ,'cruise-control' ,'ci', 'cd', 'cicd', 'continuous delivery', 'git']
 }
 
 gradlePlugin {
     plugins {
         gocdVersionPlugin {
             id = 'net.raumzeitfalle.gradle.gocdversion'
-            displayName = 'GoCD Version Number Plugin'
-            description = 'Allows to use GoCD pipeline environment details to be used in version numbers. '+
+            displayName = 'Git GoCD Version Number Plugin'
+            description = 'Allows to generate version numbers from Git tags and GoCD pipeline environment details. '+
                           'Provides closures to read environment variables of GoCD pipelines. '
                           'Provides very simple method to create MSI/WIX compatible version numbers e.g. from '+
                           'Git version tag.'
@@ -39,6 +39,7 @@ gradlePlugin {
 }
 
 dependencies {
+    // implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.13.3.202401111512-r'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'

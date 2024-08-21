@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.*;
@@ -15,11 +16,10 @@ import org.gradle.api.logging.Logger;
 public class GitTagVersionHelper {
     
     private final Logger logger;
-    
     private Path workingDir;
-
     private Path gitDir;
     private String missingTagFallback;
+    private String versionTagRegex;
 
     GitTagVersionHelper(Logger logger) {
         this(logger, Paths.get("."));
@@ -30,6 +30,7 @@ public class GitTagVersionHelper {
         this.logger = logger;
         this.gitDir = null;
         this.missingTagFallback = "0.0";
+        this.versionTagRegex = "^\\d*([.]\\d*)?([.]\\d*)?$";
     }
 
     private void logError(String errorMessage, Throwable throwable) {
@@ -101,15 +102,20 @@ public class GitTagVersionHelper {
         GitDetails details = new GitDetails(alternativeTag, 0, sourceCommit);
         return Optional.of(details);
     }
-    
+
+    private String getTag(String refName) {
+        return refName.replace(Constants.R_TAGS, "");
+    }
+
     private GitDetails getLatestTagWithCommitCount(Repository repo, String branch) {
-        Map<ObjectId,String> tags = new HashMap<>();
+
+        GitTagCollector tagCollector = new GitTagCollector(repo, versionTagRegex, logger);
+        Map<ObjectId,String> tags = tagCollector.collect();
+
         int commitCount = -1;
         String tagName = null;
         RevCommit lastCommit = null;
         try (Git git = new Git(repo)) {
-            List<Ref> refs = repo.getRefDatabase().getRefsByPrefix(Constants.R_TAGS);
-            refs.forEach(ref->tags.put(ref.getObjectId(), ref.getName()));
             if (!tags.isEmpty()) {
                 Map<AnyObjectId, Set<Ref>> peeledIdsByRefs = repo.getAllRefsByPeeledObjectId();
                 Iterable<RevCommit> commitlog = git.log().add(repo.resolve(branch)).call();
@@ -122,9 +128,9 @@ public class GitTagVersionHelper {
                     Set<Ref> relatedRefs = peeledIdsByRefs.get(commit.getId());
                     if (relatedRefs != null) {
                         for (Ref ref : relatedRefs) {
-                            String relatedTag = tags.get(ref.getObjectId());
-                            if (relatedTag != null) {
-                                tagName = relatedTag.replace(Constants.R_TAGS, "");
+                            String relatedRef = tags.get(ref.getObjectId());
+                            if (relatedRef != null) {
+                                tagName = getTag(relatedRef);
                                 break;
                             }
                         }
@@ -133,7 +139,7 @@ public class GitTagVersionHelper {
                     if (tagName == null) {
                         if (tags.containsKey(commit.getId())) {
                             tagName = tags.get(commit.getId())
-                                    .replace(Constants.R_TAGS, "");
+                                          .replace(Constants.R_TAGS, "");
                             break;
                         }
                     }

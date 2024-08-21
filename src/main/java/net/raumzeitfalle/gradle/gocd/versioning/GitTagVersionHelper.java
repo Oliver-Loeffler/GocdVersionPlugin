@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.*;
@@ -29,7 +28,7 @@ public class GitTagVersionHelper {
         this.workingDir = workingDir;
         this.logger = logger;
         this.gitDir = null;
-        this.versionTagRegex = GitTagCollector.DEFAULT_SEMVER_TAG_REGEX;
+        this.versionTagRegex = GitTagCollector.DEFAULT_VERSIONABLE_TAG_REGEX;
     }
 
     private void logError(String errorMessage, Throwable throwable) {

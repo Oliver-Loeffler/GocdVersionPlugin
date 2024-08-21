@@ -1,13 +1,10 @@
 # GocdVersionPlugin for Gradle
 
-Auto-generating version numbers for GoCD automated builds from Git tags.
+Auto-generating version numbers for [GoCD](https://www.gocd.org/)  automated builds from [Git](https://git-scm.com/) tags.
 ----
 
-This plugin has the purpose to work with GoCD in order to detect if a build runs in a GoCD pipeline on a GoCD build agent.
-Depending on that, the project version identifier will be updated.
-
-There are no dependencies to other plugins.
-
+This plugin has the purpose to work with [GoCD](https://www.gocd.org/) in order to detect if a build runs in a GoCD pipeline on a GoCD build agent.
+Depending on that, the project version identifier will be updated. There are no dependencies to other plugins. The only external dependency is Eclipses [JGit](https://www.eclipse.org/jgit/).
 Version `0.0.1` works with Java-11 or newer, version `0.0.2` works again with Java-8 and newer.
 
 ## Combining Git with GoCD
@@ -32,7 +29,7 @@ version = gocdVersion(versionDetails().lastTag+'.'+versionDetails().commitDistan
                       versionDetails().lastTag+'.'+versionDetails().commitDistance+'-'+versionDetails().gitHash).build()
 ```
 
-In this example I've decided to go with the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11). 
+In this example I've decided to go with the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11). However, the use of 3rd party plugins to generate versions from Git tags is no longer necessary, this is now a core function of this plugin as well. 
 
 The idea is, that the PATCH version can be directly taken from Git history. One could `tag` a specific git commit with an appropriate `MAJOR.MINOR` value.
 The count of commits after the last `tag` then represents the `PATCH` version.
@@ -46,6 +43,8 @@ Approach:
 
 The `gocdVersion` function takes 2 arguments, the first one is the string to be used as version for automated builds, the second one for manual or local builds.
 So the effective version for a project can be different for atomated builds and manually initiated builds.
+
+As of version `0.0.11`, it is now possible to define a regular expression to match the desired Git tags. As the version number often is used in file names, one must ensure that the git tag does not contain characters which are illegal for use in file system paths. 
 
 With the configuration in the example, the created version number looks as follows:
 
@@ -80,10 +79,11 @@ gocdVersion {
     appendComputerNameToLocalBuilds = true
     appendTimestampToLocalBuilds = true
     
-    defaultTimestampPattern = "yyyyMMddHHmmss"
-    timestampPattern = "yyyyMMddHHmmss"
+    defaultTimestampPattern = 'yyyyMMddHHmmss'
+    timestampPattern = 'yyyyMMddHHmmss'
 
-    missingGitCommitFallbackTag = "<notag>"
+    missingGitCommitFallbackTag = '<notag>'
+    suitableTagRegex = '^\\d*([.]\\d*)?([.]\\d*)?$'
 }
 ```
 

@@ -19,7 +19,7 @@ public class GocdVersionPluginExtension {
 
     public void setSuitableTagRegex(String newSuitableTagRegex) {
         if (newSuitableTagRegex == null || "".equals(newSuitableTagRegex.trim())) {
-            this.suitableTagRegex = GitTagCollector.DEFAULT_SEMVER_TAG_REGEX;
+            this.suitableTagRegex = GitTagCollector.DEFAULT_VERSIONABLE_TAG_REGEX;
         } else {
             this.suitableTagRegex = newSuitableTagRegex;
         }

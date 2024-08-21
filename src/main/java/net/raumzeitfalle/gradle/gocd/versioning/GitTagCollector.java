@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 class GitTagCollector {
 
-    public static String DEFAULT_SEMVER_TAG_REGEX = "^\\d*([.]\\d*)?([.]\\d*)?$";
+    public static String DEFAULT_VERSIONABLE_TAG_REGEX = "^\\d*([.]\\d*)?([.]\\d*)?$";
 
     private final Logger logger;
     private final Repository repo;
@@ -32,7 +32,7 @@ class GitTagCollector {
             return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         } catch (IllegalArgumentException error) {
             logWarn("The given string is not a valid regular expression: " + regex, error);
-            return Pattern.compile(DEFAULT_SEMVER_TAG_REGEX, Pattern.CASE_INSENSITIVE);
+            return Pattern.compile(DEFAULT_VERSIONABLE_TAG_REGEX, Pattern.CASE_INSENSITIVE);
         }
     }
 

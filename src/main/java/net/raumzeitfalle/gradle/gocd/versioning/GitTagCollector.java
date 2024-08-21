@@ -15,14 +15,25 @@ import java.util.regex.Pattern;
 
 class GitTagCollector {
 
+    public static String DEFAULT_SEMVER_TAG_REGEX = "^\\d*([.]\\d*)?([.]\\d*)?$";
+
     private final Logger logger;
     private final Repository repo;
     private final Pattern versionTagPattern;
 
     public GitTagCollector(Repository repo, String versionTagRegex, Logger logger) {
         this.repo = repo;
-        this.versionTagPattern = Pattern.compile(versionTagRegex, Pattern.CASE_INSENSITIVE);
+        this.versionTagPattern = compilePatternAndWarnOnError(versionTagRegex);
         this.logger = logger;
+    }
+
+    private Pattern compilePatternAndWarnOnError(String regex) {
+        try {
+            return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        } catch (IllegalArgumentException error) {
+            logWarn("The given string is not a valid regular expression: " + regex, error);
+            return Pattern.compile(DEFAULT_SEMVER_TAG_REGEX, Pattern.CASE_INSENSITIVE);
+        }
     }
 
     public Map<ObjectId,String> collect() {
@@ -66,6 +77,12 @@ class GitTagCollector {
     private void logDebug(String format, Object arg) {
         if (this.logger != null) {
             this.logger.debug(format, arg);
+        }
+    }
+
+    private void logWarn(String format, Object arg) {
+        if (this.logger != null) {
+            this.logger.warn(format, arg);
         }
     }
 

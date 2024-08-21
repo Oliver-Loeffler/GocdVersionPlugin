@@ -26,15 +26,10 @@ public class GitTagVersionHelper {
     }
 
     GitTagVersionHelper(Logger logger, Path workingDir) {
-        this(logger, workingDir, "^\\d*([.]\\d*)?([.]\\d*)?$", "0.0");
-    }
-
-    GitTagVersionHelper(Logger logger, Path workingDir, String tagRegex, String fallbackTag) {
         this.workingDir = workingDir;
         this.logger = logger;
         this.gitDir = null;
-        this.missingTagFallback = fallbackTag;
-        this.versionTagRegex = tagRegex;
+        this.versionTagRegex = GitTagCollector.DEFAULT_SEMVER_TAG_REGEX;
     }
 
     private void logError(String errorMessage, Throwable throwable) {
@@ -194,9 +189,16 @@ public class GitTagVersionHelper {
         }
     }
 
-    void setMissingTagFallback(String missingTagVersionDefault) {
+    GitTagVersionHelper setMissingTagFallback(String missingTagVersionDefault) {
         Objects.requireNonNull(missingTagVersionDefault, "missing tag version default must never be null!");
         this.missingTagFallback = missingTagVersionDefault;
+        return this;
+    }
+
+    GitTagVersionHelper setVersionTagRegex(String tagRegex) {
+        Objects.requireNonNull(tagRegex, "Regular expression for tag selection must never be null!");
+        this.versionTagRegex = tagRegex.trim();
+        return this;
     }
 
     static class GitDetails {

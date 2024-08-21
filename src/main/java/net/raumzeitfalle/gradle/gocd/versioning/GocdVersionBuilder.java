@@ -80,7 +80,9 @@ public class GocdVersionBuilder {
 
         if (manualBuildVersion == null && autoBuildVersion == null) {
             String gradleProjectVersion = getProjectVersionWithFallback();
-            String projectVersion = new GitTagVersionHelper(this.logger, this.buildFilePath)
+            String projectVersion = new GitTagVersionHelper(logger, buildFilePath)
+                    .setVersionTagRegex(this.extension.getSuitableTagRegex())
+                    .setMissingTagFallback(this.extension.getMissingTagVersionDefault())
                     .getLatestTag()
                     .map(details -> details.map(this.extension))
                     .orElseGet(() -> gradleProjectVersion);
@@ -93,7 +95,11 @@ public class GocdVersionBuilder {
     private String getProjectVersionWithFallback() {
         String gradleProjectVersion = String.valueOf(this.projectVersion.get()).trim();
         if (null == gradleProjectVersion || "unspecified".equalsIgnoreCase(gradleProjectVersion.toLowerCase())) {
-            GitTagVersionHelper gitHelper = new GitTagVersionHelper(this.logger, this.buildFilePath);
+
+            GitTagVersionHelper gitHelper = new GitTagVersionHelper(logger, buildFilePath);
+            gitHelper.setVersionTagRegex(this.extension.getSuitableTagRegex());
+            gitHelper.setMissingTagFallback(this.extension.getMissingTagVersionDefault());
+
             Optional<GitTagVersionHelper.GitDetails> gitDetails = gitHelper.getLatestCommit();
             if (gitDetails.isPresent()) {
                 GitTagVersionHelper.GitDetails details = gitDetails.get();

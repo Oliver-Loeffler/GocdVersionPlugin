@@ -29,7 +29,11 @@ public class GitTagVersionClosure extends Closure {
         Logger logger = this.project.getLogger();
         Path buildFilePath = this.project.getBuildFile().toPath().getParent();
         logger.lifecycle("Build file path: {}", buildFilePath);
-        GitTagVersionHelper gitTagHelper = new GitTagVersionHelper(logger, buildFilePath);
+        GitTagVersionHelper gitTagHelper = new GitTagVersionHelper(logger,
+                                                                   buildFilePath);
+
+        gitTagHelper.setVersionTagRegex(this.ext.getSuitableTagRegex());
+
         Optional<GitDetails> latestTag = gitTagHelper.getLatestTag();
 
         if (latestTag.isPresent()) {

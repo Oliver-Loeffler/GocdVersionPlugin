@@ -14,8 +14,22 @@ public class GocdVersionPluginExtension {
     private boolean appendTimestampToLocalBuilds = true;
     private boolean appendGitCommitCountToGitTagVersion = true;
     private String  missingGitCommitFallbackTag = "<notag>";
-
     private String  missingGitTagVersionDefault = "0.0";
+    private String  suitableTagRegex = "^\\d*([.]\\d*)?([.]\\d*)?$";
+
+    public void setSuitableTagRegex(String newSuitableTagRegex) {
+        if (newSuitableTagRegex == null || "".equals(newSuitableTagRegex.trim())) {
+            this.suitableTagRegex = GitTagCollector.DEFAULT_SEMVER_TAG_REGEX;
+        } else {
+            this.suitableTagRegex = newSuitableTagRegex;
+        }
+    }
+
+    public String getSuitableTagRegex() {
+        return suitableTagRegex;
+    }
+
+
     public Supplier<LocalDateTime> getTimestampSupplier() {
         return timestampSupplier;
     }

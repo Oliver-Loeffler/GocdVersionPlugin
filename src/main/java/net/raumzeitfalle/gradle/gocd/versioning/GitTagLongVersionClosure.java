@@ -29,7 +29,10 @@ public class GitTagLongVersionClosure extends Closure {
         Path buildFilePath = this.project.getBuildFile().toPath().getParent();
         logger.lifecycle("Build file path: {}", buildFilePath);
         GitTagVersionHelper gitTagHelper = new GitTagVersionHelper(logger, buildFilePath);
+
         gitTagHelper.setMissingTagFallback(this.ext.getMissingTagVersionDefault());
+        gitTagHelper.setVersionTagRegex(this.ext.getSuitableTagRegex());
+
         Optional<GitDetails> latestTag = gitTagHelper.getLatestTag();
 
         StringBuilder versionBuilder = new StringBuilder();

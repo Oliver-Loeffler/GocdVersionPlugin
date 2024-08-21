@@ -42,8 +42,14 @@ public class GitTagVersionHelper {
             this.logger.warn(warning);
         }
     }
-    
+
     private void logInfo(String format, Object arg) {
+        if (this.logger != null) {
+            this.logger.info(format, arg);
+        }
+    }
+
+    private void logLifecycle(String format, Object arg) {
         if (this.logger != null) {
             this.logger.lifecycle(format, arg);
         }
@@ -181,6 +187,7 @@ public class GitTagVersionHelper {
                                           .setMustExist(true)
                                           .build();
             this.gitDir = repo.getDirectory().toPath().toAbsolutePath();
+            logInfo("Found git repository in: {}", this.gitDir);
             return repo;
         } catch (Exception error) {
             logWarn("Could not find a valid .git repository!");

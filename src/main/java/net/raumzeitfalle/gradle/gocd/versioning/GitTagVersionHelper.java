@@ -26,7 +26,7 @@ public class GitTagVersionHelper {
     }
 
     GitTagVersionHelper(Logger logger, Path workingDir) {
-        this(logger, workingDir, "^\\d*([.]\\d*)?$", "0.0");
+        this(logger, workingDir, "^\\d*([.]\\d*)?([.]\\d*)?$", "0.0");
     }
 
     GitTagVersionHelper(Logger logger, Path workingDir, String tagRegex, String fallbackTag) {

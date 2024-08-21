@@ -24,13 +24,17 @@ public class GitTagVersionHelper {
     GitTagVersionHelper(Logger logger) {
         this(logger, Paths.get("."));
     }
-    
+
     GitTagVersionHelper(Logger logger, Path workingDir) {
+        this(logger, workingDir, "^\\d*([.]\\d*)?$", "0.0");
+    }
+
+    GitTagVersionHelper(Logger logger, Path workingDir, String tagRegex, String fallbackTag) {
         this.workingDir = workingDir;
         this.logger = logger;
         this.gitDir = null;
-        this.missingTagFallback = "0.0";
-        this.versionTagRegex = "^\\d*([.]\\d*)?([.]\\d*)?$";
+        this.missingTagFallback = fallbackTag;
+        this.versionTagRegex = tagRegex;
     }
 
     private void logError(String errorMessage, Throwable throwable) {

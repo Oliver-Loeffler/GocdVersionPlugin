@@ -43,6 +43,7 @@ public class GocdVersionBuilderTest {
         environment.setEnvVariable(GOCD.COMPUTERNAME, "BUILDAGENT");
         environment.setEnvVariable(GOCD.GO_PIPELINE_COUNTER, "156");
         extension.setAppendStageCounterToAutomatedBuilds(false);
+        extension.setAppendPipelineCounterToAutomatedBuilds(true);
         givenProjectVersion = null;
         
         classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion ,null);
@@ -56,6 +57,8 @@ public class GocdVersionBuilderTest {
         environment.setEnvVariable(GOCD.GO_PIPELINE_COUNTER, "2");
         environment.setEnvVariable(GOCD.GO_STAGE_COUNTER, "1");
         givenProjectVersion = "20210912.0";
+        extension.setAppendPipelineCounterToAutomatedBuilds(true);
+        extension.setAppendStageCounterToAutomatedBuilds(true);
         classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, null);
 
         assertEquals("20210912.0.2.1", classUnderTest.build());
@@ -104,6 +107,9 @@ public class GocdVersionBuilderTest {
         environment.setEnvVariable(GOCD.GO_PIPELINE_COUNTER, "23");
         environment.setEnvVariable(GOCD.GO_STAGE_COUNTER, "1");
         givenProjectVersion = "1.0-LOCAL-BUILD";
+        extension.setAppendPipelineCounterToAutomatedBuilds(true);
+        extension.setAppendStageCounterToAutomatedBuilds(true);
+
         classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion, "1.0-AUTOMATED-BUILD");
 
         assertEquals("1.0-AUTOMATED-BUILD.23.1", classUnderTest.build());

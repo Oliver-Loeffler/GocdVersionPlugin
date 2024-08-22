@@ -49,6 +49,8 @@ public class GocdVersionClosureTest {
 
     @Test
     void that_auto_version_is_properly_generated_by_closure() {
+        ext.setAppendPipelineCounterToAutomatedBuilds(true);
+        ext.setAppendStageCounterToAutomatedBuilds(true);
         Supplier<GocdEnvironment> env = ()->new GocdEnvironmentImpl(project, 
                                                                     mapOf3(GOCD.COMPUTERNAME,        "HAL9000",
                                                                            GOCD.GO_PIPELINE_COUNTER, "123",

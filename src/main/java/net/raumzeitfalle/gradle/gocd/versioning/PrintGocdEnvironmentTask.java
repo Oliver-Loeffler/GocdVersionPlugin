@@ -1,5 +1,6 @@
 package net.raumzeitfalle.gradle.gocd.versioning;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,8 +58,13 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
                 .append(env.get(variable));
             allLines.add(line.toString());
         }
-        
-        String automatedVersion = new GitTagVersionHelper(getProject().getLogger()).getLatestTag()
+
+        Path projectDir = getProject().getProjectDir().toPath();
+        getProject().getLogger().info("Project directory: {}", projectDir);
+        String automatedVersion = new GitTagVersionHelper(getProject().getLogger(), projectDir)
+                .setVersionTagRegex(ext.getSuitableTagRegex())
+                .setMissingTagFallback(ext.getMissingTagVersionDefault())
+                .getLatestTag()
                 .map(details->details.map(ext))
                 .orElseGet(()->{
                     getProject().getLogger().warn("No git tag found, will use version as defined in build.gradle.");

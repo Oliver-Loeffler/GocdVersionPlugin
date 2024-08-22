@@ -62,5 +62,5 @@ public class GitTagLongVersionClosure extends Closure {
         logger.warn("Cannot read latest commit ID. Hence cannot build suitable version number. Using fallback tag.");
         return ext.getMissingGitCommitFallbackTag().toString();
     }
-    
+
 }

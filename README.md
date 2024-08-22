@@ -29,7 +29,7 @@ version = gocdVersion(versionDetails().lastTag+'.'+versionDetails().commitDistan
                       versionDetails().lastTag+'.'+versionDetails().commitDistance+'-'+versionDetails().gitHash).build()
 ```
 
-In this example I've decided to go with the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11). However, the use of 3rd party plugins to generate versions from Git tags is no longer necessary, this is now a core function of this plugin as well. 
+In this example I've decided to go with the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11). 
 
 The idea is, that the PATCH version can be directly taken from Git history. One could `tag` a specific git commit with an appropriate `MAJOR.MINOR` value.
 The count of commits after the last `tag` then represents the `PATCH` version.
@@ -85,6 +85,16 @@ gocdVersion {
     missingGitCommitFallbackTag = '<notag>'
     suitableTagRegex = '^\\d*([.]\\d*)?([.]\\d*)?$'
 }
+```
+
+To generate the version number from git tags, one needs to add following line to the Gradle build at the point where the version is defined:
+
+```groovy
+gocdVersion {
+	suitableTagRegex = '^\\d*([.]\\d*)?([.]\\d*)?$'
+}
+
+version = gocdVersion().build()
 ```
 
 The effective version number schema can be verified using the `printGocdEnvironment` task on commandline.

@@ -12,8 +12,8 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.gradle.api.logging.Logger;
 
 
-public class GitTagVersionHelper {
-    
+public class GitTagVersionHelper implements Loggable {
+
     private final Logger logger;
     private Path workingDir;
     private Path gitDir;
@@ -31,30 +31,6 @@ public class GitTagVersionHelper {
         this.versionTagRegex = GitTagCollector.DEFAULT_VERSIONABLE_TAG_REGEX;
     }
 
-    private void logError(String errorMessage, Throwable throwable) {
-        if (this.logger != null) {
-            this.logger.error(errorMessage, throwable);
-        }
-    }
-    
-    private void logWarn(String warning) {
-        if (this.logger != null) {
-            this.logger.warn(warning);
-        }
-    }
-
-    private void logInfo(String format, Object arg) {
-        if (this.logger != null) {
-            this.logger.info(format, arg);
-        }
-    }
-
-    private void logLifecycle(String format, Object arg) {
-        if (this.logger != null) {
-            this.logger.lifecycle(format, arg);
-        }
-    }
-
     Optional<GitDetails> getLatestTag() {
         Repository repo = getRepository();
         if (null == repo) {
@@ -66,21 +42,21 @@ public class GitTagVersionHelper {
         if (null == currentBranch) {
             return Optional.empty();
         }
-        
-        GitDetails gitDetails = getLatestTagWithCommitCount(repo,currentBranch);
+
+        GitDetails gitDetails = getLatestTagWithCommitCount(repo, currentBranch);
         if (!gitDetails.isValid()) {
-            return Optional.empty();    
+            return Optional.empty();
         }
         return Optional.of(gitDetails);
     }
-    
+
     Optional<GitDetails> getLatestCommit() {
         Repository repo = getRepository();
         if (null == repo) {
             return Optional.empty();
         }
         logInfo("Found .git in: {}", this.gitDir);
-        
+
         String currentBranch = getBranchName(repo);
         if (null == currentBranch) {
             return Optional.empty();
@@ -97,12 +73,12 @@ public class GitTagVersionHelper {
         } catch (Exception error) {
             logError("Could not obtain latest commit details for the given repository.", error);
         }
-        
+
         if (sourceCommit == null) {
             return Optional.empty();
         }
-                
-        String alternativeTag = sourceCommit.getName().substring(0,7);
+
+        String alternativeTag = sourceCommit.getName().substring(0, 7);
         GitDetails details = new GitDetails(alternativeTag, 0, sourceCommit);
         return Optional.of(details);
     }
@@ -114,7 +90,7 @@ public class GitTagVersionHelper {
     private GitDetails getLatestTagWithCommitCount(Repository repo, String branch) {
 
         GitTagCollector tagCollector = new GitTagCollector(repo, versionTagRegex, logger);
-        Map<ObjectId,String> tags = tagCollector.collect();
+        Map<ObjectId, String> tags = tagCollector.collect();
 
         int commitCount = -1;
         String tagName = null;
@@ -143,7 +119,7 @@ public class GitTagVersionHelper {
                     if (tagName == null) {
                         if (tags.containsKey(commit.getId())) {
                             tagName = tags.get(commit.getId())
-                                          .replace(Constants.R_TAGS, "");
+                                    .replace(Constants.R_TAGS, "");
                             break;
                         }
                     }
@@ -165,10 +141,12 @@ public class GitTagVersionHelper {
         } catch (Exception error) {
             logError("Could not collect all git branch/tag/commit details for the given repository.", error);
         }
+        if (null == tagName) {
+            tagName = this.missingTagFallback;
+        }
         return new GitDetails(tagName, commitCount, lastCommit);
     }
-    
-    
+
 
     protected String getBranchName(Repository repo) {
         try {
@@ -183,9 +161,9 @@ public class GitTagVersionHelper {
         logInfo("Looking for git repository in: {}", workingDir.toAbsolutePath().normalize());
         try {
             Repository repo = new RepositoryBuilder().findGitDir(workingDir.toFile())
-                                          .readEnvironment()
-                                          .setMustExist(true)
-                                          .build();
+                    .readEnvironment()
+                    .setMustExist(true)
+                    .build();
             this.gitDir = repo.getDirectory().toPath().toAbsolutePath();
             logInfo("Found git repository in: {}", this.gitDir);
             return repo;
@@ -207,6 +185,30 @@ public class GitTagVersionHelper {
         return this;
     }
 
+    private void logError(String errorMessage, Throwable throwable) {
+        if (this.logger != null) {
+            this.logger.error(errorMessage, throwable);
+        }
+    }
+
+    private void logWarn(String warning) {
+        if (this.logger != null) {
+            this.logger.warn(warning);
+        }
+    }
+
+    private void logInfo(String format, Object arg) {
+        if (this.logger != null) {
+            this.logger.info(format, arg);
+        }
+    }
+
+    private void logLifecycle(String format, Object arg) {
+        if (this.logger != null) {
+            this.logger.lifecycle(format, arg);
+        }
+    }
+
     static class GitDetails {
         private final String tagName;
         private final int commitCount;
@@ -219,24 +221,30 @@ public class GitTagVersionHelper {
         }
 
         boolean isValid() {
-            if (commit == null) { return false; }
-            if (commitCount < 0) { return false; }
-            if ("".equals(tagName)) { return false; }
+            if (commit == null) {
+                return false;
+            }
+            if (commitCount < 0) {
+                return false;
+            }
+            if ("".equals(tagName)) {
+                return false;
+            }
             return true;
         }
 
         public String getTag() {
             return tagName;
         }
-        
+
         public String getShortCommitName() {
             return commit.getName().substring(0, 7);
         }
-        
+
         public String getCommitName() {
             return commit.getName();
         }
-        
+
         public int getCommitCount() {
             return commitCount;
         }
@@ -250,7 +258,7 @@ public class GitTagVersionHelper {
 
         public String map(GocdVersionPluginExtension extension) {
             if (extension.getAppendGitCommitCountToGitTagVersion()) {
-                return tagName+"."+commitCount;
+                return tagName + "." + commitCount;
             }
             return tagName;
         }

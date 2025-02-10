@@ -5,7 +5,7 @@ Auto-generating version numbers for [GoCD](https://www.gocd.org/)  automated bui
 
 This plugin has the purpose to work with [GoCD](https://www.gocd.org/) in order to detect if a build runs in a GoCD pipeline on a GoCD build agent.
 Depending on that, the project version identifier will be updated. There are no dependencies to other plugins. The only external dependency is Eclipses [JGit](https://www.eclipse.org/jgit/).
-Version `0.0.1` works with Java-11 or newer, version `0.0.2` works again with Java-8 and newer.
+Versions `0.0.2` till `0.0.11` are working with Java-8 and newer. Since version 0.0.12, Java 11 is now again the baseline.
 
 ## Combining Git with GoCD
 
@@ -20,21 +20,30 @@ As of now for a Java library the Gradle code (Groovy DSL) looks as follows:
 ```groovy
 plugins {
     id "java-library"
-    id "com.palantir.git-version" version "0.15.0"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.8'
+ // id "com.palantir.git-version" version "0.15.0"
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.11'
 }
 
 // Git details are provided by git-version plugin
-version = gocdVersion(versionDetails().lastTag+'.'+versionDetails().commitDistance,
-                      versionDetails().lastTag+'.'+versionDetails().commitDistance+'-'+versionDetails().gitHash).build()
+// version = gocdVersion(versionDetails().lastTag+'.'+versionDetails().commitDistance,
+//                       versionDetails().lastTag+'.'+versionDetails().commitDistance+'-'+versionDetails().gitHash).build()
+
+version = gocdVersion().build()
+println("Automatic version=" + version)
+// There is no need anymore to run other plugins as this one has native git support via JGit.
+// Hence, git tags can be used to generate version numbers automatically.
+
 ```
 
-In this example I've decided to go with the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11). 
+In this example I've previously used the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11).
+The GocdVersionPlugin provides support for Git using JGit (since 0.0.6), hence another 3rd party plugin is no longer needed, so a version number can be directly generated from Git tag.
+This indeed requires, that a useful tag exists. The schema for version number creation is configurable.
 
 The idea is, that the PATCH version can be directly taken from Git history. One could `tag` a specific git commit with an appropriate `MAJOR.MINOR` value.
 The count of commits after the last `tag` then represents the `PATCH` version.
 
-As with version `0.0.6`, no 3rd party plugin is needed to obtain a version number from Git tag. When calling `gocdVersion()` without arguments, the plugin will attempt to obtain the latest Git tag and also commit distance to the head. Its not tested yet with all thinkable git scenarios - its very experimental.
+When calling `gocdVersion()` without arguments, the plugin will attempt to obtain the latest Git tag and also commit distance to the head. I'm using it in various production scenarios and it has proven to work well.
+However, it is mandatory to make the Git clones large enough, to have the commit tags available. 
 
 Approach:
 * declare `MAJOR.MINOR` using `git tag` command
@@ -199,7 +208,7 @@ tasks.named('test') {
 
 ## License
 
-Copyright 2021, 2024 Oliver Löffler
+Copyright 2021, 2025 Oliver Löffler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

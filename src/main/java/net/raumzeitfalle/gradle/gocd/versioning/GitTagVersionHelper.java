@@ -12,7 +12,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.gradle.api.logging.Logger;
 
 
-public class GitTagVersionHelper implements Loggable {
+public class GitTagVersionHelper {
 
     private final Logger logger;
     private Path workingDir;

@@ -37,8 +37,16 @@ public class GocdEnvironmentTest {
     }
 
     @Test
-    void that_a_build_is_automated_when_a_pipeline_counter_exists() {
+    void that_a_build_is_automated_when_a_GOCD_GO_PIPELINE_COUNTER_exists() {
         myEnvironment = mapOf(GOCD.GO_PIPELINE_COUNTER,"216");
+        classUnderTest = new GocdEnvironmentImpl(project,myEnvironment);
+
+        assertTrue(classUnderTest.isAutomatedBuild());
+    }
+
+    @Test
+    void that_a_build_is_automated_when_a_Gitlab_CI_JOB_ID_exists() {
+        myEnvironment = mapOf(GitlabCICD.CI,"112323");
         classUnderTest = new GocdEnvironmentImpl(project,myEnvironment);
 
         assertTrue(classUnderTest.isAutomatedBuild());

@@ -151,7 +151,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
     
     @Override
     public boolean isAutomatedBuild() {
-        return environment.containsKey(GOCD.GO_PIPELINE_COUNTER.toString());
+        return environment.containsKey(GOCD.GO_PIPELINE_COUNTER.toString()) || environment.containsKey(GitlabCICD.CI.toString());
     }
 
     private String getenv(String name) {

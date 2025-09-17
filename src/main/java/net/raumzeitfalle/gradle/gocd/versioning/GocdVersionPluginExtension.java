@@ -15,7 +15,7 @@ public class GocdVersionPluginExtension {
     private boolean appendGitCommitCountToGitTagVersion = true;
     private String  missingGitCommitFallbackTag = "<notag>";
     private String  missingGitTagVersionDefault = "0.0";
-    private String  suitableTagRegex = "^\\d*([.]\\d*)?([.]\\d*)?$";
+    private String  suitableTagRegex = "^([vV])?\\d+([.]\\d+)?([.]\\d+)?([.]\\d+)?$";
 
     public void setSuitableTagRegex(String newSuitableTagRegex) {
         if (newSuitableTagRegex == null || "".equals(newSuitableTagRegex.trim())) {

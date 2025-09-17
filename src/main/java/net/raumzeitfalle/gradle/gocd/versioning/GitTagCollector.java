@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 class GitTagCollector {
 
-    public static String DEFAULT_VERSIONABLE_TAG_REGEX = "^\\d*([.]\\d*)?([.]\\d*)?$";
+    public static String DEFAULT_VERSIONABLE_TAG_REGEX = "^([vV])?\\d+([.]\\d+)?([.]\\d+)?([.]\\d+)?$";
 
     private final Logger logger;
     private final Repository repo;

@@ -46,7 +46,15 @@ public class GocdEnvironmentTest {
 
     @Test
     void that_a_build_is_automated_when_a_Gitlab_CI_JOB_ID_exists() {
-        myEnvironment = mapOf(GitlabCICD.CI,"112323");
+        myEnvironment = mapOf(GitlabCICD.CI,"true");
+        classUnderTest = new GocdEnvironmentImpl(project,myEnvironment);
+
+        assertTrue(classUnderTest.isAutomatedBuild());
+    }
+
+    @Test
+    void that_a_build_is_automated_when_a_GITHUB_ACTIONS_is_defined_true() {
+        myEnvironment = mapOf(GithubActions.GITHUB_ACTIONS,"true");
         classUnderTest = new GocdEnvironmentImpl(project,myEnvironment);
 
         assertTrue(classUnderTest.isAutomatedBuild());

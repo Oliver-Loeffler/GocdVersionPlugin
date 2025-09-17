@@ -11,6 +11,12 @@ public class EnvMap {
         return map;
     }
 
+    public static Map<String, String> mapOf(GithubActions variable, String value) {
+        Map<String, String> map = new HashMap<>();
+        map.put(variable.toString(), value);
+        return map;
+    }
+
     public static Map<String, String> mapOf(GitlabCICD variable, String value) {
         Map<String, String> map = new HashMap<>();
         map.put(variable.toString(), value);

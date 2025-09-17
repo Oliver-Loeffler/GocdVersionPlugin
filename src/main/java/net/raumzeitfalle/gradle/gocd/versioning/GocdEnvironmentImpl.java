@@ -148,10 +148,33 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         return Arrays.stream(configuredResources.split(","))
                      .collect(Collectors.toList());
     }
-    
+
+    /**
+     * Detection of automated builds is supported for GoCD, Github Actions and Gitlab CICD.
+     * For GoCD, it is sufficient to have the GO_PIPELINE_COUNTER env variable declared, regardless of its value.
+     * For Gitlab CI/CD the variable CI must exist and have the value true.
+     * For Github Actions, a variable named GITHUB_ACTIONS=true is supposed to be available.
+
+     * @return
+     */
     @Override
     public boolean isAutomatedBuild() {
-        return environment.containsKey(GOCD.GO_PIPELINE_COUNTER.toString()) || environment.containsKey(GitlabCICD.CI.toString());
+        var value = environment.get(GOCD.GO_PIPELINE_COUNTER.toString());
+        if (null != value) {
+            return true;
+        }
+
+        value = environment.get(GitlabCICD.CI.toString());
+        if ("true".equalsIgnoreCase(value)) {
+            return true;
+        }
+
+        value = environment.get(GithubActions.GITHUB_ACTIONS.toString());
+        if ("true".equalsIgnoreCase(value)) {
+            return true;
+        }
+
+        return false;
     }
 
     private String getenv(String name) {

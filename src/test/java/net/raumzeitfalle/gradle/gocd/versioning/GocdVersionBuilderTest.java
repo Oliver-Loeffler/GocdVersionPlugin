@@ -52,6 +52,20 @@ public class GocdVersionBuilderTest {
     }
 
     @Test
+    void that_timestamp_is_appended_to_local_builds() {
+        environment.setEnvVariable(GOCD.COMPUTERNAME, "BUILDAGENT");
+        extension.setAppendStageCounterToAutomatedBuilds(false);
+        extension.setAppendPipelineCounterToAutomatedBuilds(false);
+        extension.setAppendComputerNameToLocalBuilds(false);
+        extension.setAppendTimestampToLocalBuilds(true);
+        givenProjectVersion = "1.2";
+
+        classUnderTest = new GocdVersionBuilder(project, environment, extension, givenProjectVersion ,null);
+
+        assertEquals("1.2.20210904192213", classUnderTest.build());
+    }
+
+    @Test
     void that_pipeline_counter_is_appended_to_project_version() {
         environment.setEnvVariable(GOCD.COMPUTERNAME, "BUILDAGENT");
         environment.setEnvVariable(GOCD.GO_PIPELINE_COUNTER, "2");

@@ -11,6 +11,7 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 
 import groovy.lang.Closure;
+import org.gradle.tooling.events.OperationCompletionListener;
 
 public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
 
@@ -69,10 +70,35 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
          */
         project.afterEvaluate(p->this.updateProjectVersionIfNotStaticallyDefined(p,gocdVersion));
 
-        project.getGradle().afterProject(p ->{
-            Supplier<String> version = ()->p.getVersion().toString();
-            p.getLogger().lifecycle("Project version: " + version.get());
+        /*
+         * This needs to be replaced with a build service.
+         * https://docs.gradle.org/current/userguide/build_services.html
+         *https://discuss.gradle.org/t/which-method-can-replace-getproject-getgradle-buildfinished/43768/5
+         *
+         */
+        project.getGradle().addBuildListener(new BuildListener() {
+            @Override
+            public void settingsEvaluated(Settings settings) {
+
+            }
+
+            @Override
+            public void projectsLoaded(Gradle gradle) {
+
+            }
+
+            @Override
+            public void projectsEvaluated(Gradle gradle) {
+
+            }
+
+            @Override
+            public void buildFinished(BuildResult result) {
+                Supplier<String> version = ()->project.getVersion().toString();
+                result.getGradle().getRootProject().getLogger().lifecycle("Project version built: " + version.get());
+            }
         });
+
 
     }
 

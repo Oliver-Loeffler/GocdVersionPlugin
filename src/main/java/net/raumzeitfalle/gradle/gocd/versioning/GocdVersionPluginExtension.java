@@ -18,7 +18,7 @@ public class GocdVersionPluginExtension {
     private boolean appendGitCommitCountToGitTagVersion = true;
     private String  missingGitCommitFallbackTag = "<notag>";
     private String  missingGitTagVersionDefault = "0.0";
-    private String  suitableTagRegex = "^([vV])?\\d+([.]\\d+)?([.]\\d+)?([.]\\d+)?$";
+    private String  suitableTagRegex = "^([vV])?\\d+([.]\\d+)?([.]\\d+)?([.]\\d+)?(-SNAPSHOT)?$";
 
     /**
      * Allows to configure a regular expression defining how a Git tag should look like,

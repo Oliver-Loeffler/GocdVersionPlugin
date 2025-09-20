@@ -113,6 +113,11 @@ public class GocdVersionBuilder {
         StringBuilder versionBuilder = new StringBuilder();
         if (gocdEnvironment.isAutomatedBuild()) {
             versionBuilder.append(autoVersion);
+
+            if (autoVersion.toUpperCase().endsWith("-SNAPSHOT")) {
+                return versionBuilder.toString();
+            }
+
             if (extension.getAppendPipelineCounterToAutomatedBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getPipelineCounter());
             }
@@ -123,6 +128,11 @@ public class GocdVersionBuilder {
         } else {
             String formattedTimestamp = getFormattedTimestamp();
             versionBuilder.append(manualVersion);
+
+            if (manualVersion.toUpperCase().endsWith("-SNAPSHOT")) {
+                return versionBuilder.toString();
+            }
+
             if (extension.getAppendComputerNameToLocalBuilds()) {
                 versionBuilder.append(".").append(gocdEnvironment.getComputerName());
             }

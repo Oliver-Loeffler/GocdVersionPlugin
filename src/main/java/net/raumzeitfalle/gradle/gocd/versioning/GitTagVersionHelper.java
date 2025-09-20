@@ -259,6 +259,9 @@ public class GitTagVersionHelper {
 
         public String map(GocdVersionPluginExtension extension) {
             if (extension.getAppendGitCommitCountToGitTagVersion()) {
+                if (tagName.toUpperCase().endsWith("-SNAPSHOT")) {
+                    return tagName;
+                }
                 return tagName + "." + commitCount;
             }
             return tagName;

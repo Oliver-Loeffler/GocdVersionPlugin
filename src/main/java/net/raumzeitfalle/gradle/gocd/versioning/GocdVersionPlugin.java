@@ -3,7 +3,11 @@ package net.raumzeitfalle.gradle.gocd.versioning;
 import java.util.function.Supplier;
 
 import org.eclipse.jgit.util.SystemReader;
+import org.gradle.BuildListener;
+import org.gradle.BuildResult;
 import org.gradle.api.Project;
+import org.gradle.api.initialization.Settings;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 
 import groovy.lang.Closure;
@@ -64,6 +68,31 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
          * is updated accordingly.
          */
         project.afterEvaluate(p->this.updateProjectVersionIfNotStaticallyDefined(p,gocdVersion));
+
+        project.getGradle().addBuildListener(new BuildListener() {
+            @Override
+            public void settingsEvaluated(Settings settings) {
+
+            }
+
+            @Override
+            public void projectsLoaded(Gradle gradle) {
+
+            }
+
+            @Override
+            public void projectsEvaluated(Gradle gradle) {
+
+            }
+
+            @Override
+            public void buildFinished(BuildResult result) {
+                Supplier<String> version = ()->project.getVersion().toString();
+                result.getGradle().getRootProject().getLogger().lifecycle("Project version: " + version.get());
+            }
+        });
+
+
     }
 
     private void updateProjectVersionIfNotStaticallyDefined(Project project, GocdVersionClosure gocdVersion) {
@@ -71,7 +100,7 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
         if (null == version) {
             String updatedVersion = gocdVersion.doCall().build();
             project.setVersion(updatedVersion);
-            project.getLogger().lifecycle("Project version: " + updatedVersion);
+            project.getLogger().lifecycle("Configured project version: " + project.getVersion());
             return;
         }
 

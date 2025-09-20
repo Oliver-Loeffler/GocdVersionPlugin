@@ -39,7 +39,7 @@ public class GitTagLongVersionClosure extends Closure {
 
         if (latestTag.isPresent()) {
             GitDetails details = latestTag.get();
-            logger.lifecycle("...found Git tag: {}", details.getTag());
+            logger.lifecycle("GocdVersionPlugin: ...found Git tag: {}", details.getTag());
             versionBuilder.append(details.getTag())
                     .append(".")
                     .append(details.getCommitCount())
@@ -48,7 +48,7 @@ public class GitTagLongVersionClosure extends Closure {
             return versionBuilder.toString();
         }
 
-        logger.warn("Cannot read latest related Git Tag to build version number. Trying latest commit ID...");
+        logger.warn("GocdVersionPlugin: Cannot read latest related Git Tag to build version number. Trying latest commit ID...");
 
         Optional<GitDetails> latestCommit = gitTagHelper.getLatestCommit();
         if (latestCommit.isPresent()) {
@@ -59,7 +59,7 @@ public class GitTagLongVersionClosure extends Closure {
                     .append(details.getCommitCount());
             return versionBuilder.toString();
         }
-        logger.warn("Cannot read latest commit ID. Hence cannot build suitable version number. Using fallback tag.");
+        logger.warn("GocdVersionPlugin: Cannot read latest commit ID. Hence cannot build suitable version number. Using fallback tag.");
         return ext.getMissingGitCommitFallbackTag().toString();
     }
 

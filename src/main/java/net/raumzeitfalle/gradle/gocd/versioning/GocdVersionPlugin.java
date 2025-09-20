@@ -19,8 +19,8 @@ public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
         project.getExtensions().create("gocdVersion", GocdVersionPluginExtension.class);
         project.getTasks().register("printGocdEnvironment", PrintGocdEnvironmentTask.class);
 
-        Supplier<GocdEnvironment> environmentSupplier = ()->new GocdEnvironmentImpl(project, System.getenv());
-        project.getExtensions().getExtraProperties().set("gocdEnvironment", new Closure<GocdEnvironment>(this,this)  {
+        Supplier<GocdEnvironment> environmentSupplier = () -> new GocdEnvironmentImpl(project, System.getenv());
+        project.getExtensions().getExtraProperties().set("gocdEnvironment", new Closure<GocdEnvironment>(this, this) {
             @SuppressWarnings("unused")
             public GocdEnvironment doCall(Object args) {
                 return environmentSupplier.get();
@@ -29,23 +29,52 @@ public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
 
         GocdVersionPluginExtension ext = project.getExtensions().getByType(GocdVersionPluginExtension.class);
         ExtraPropertiesExtension extras = project.getExtensions().getExtraProperties();
-        extras.set("gitTagVersion",             new GitTagVersionClosure(project, ext, this));
-        extras.set("gitTagLongVersion",         new GitTagLongVersionClosure(project, ext, this));
-        extras.set("gocdVersion",               new GocdVersionClosure(project,environmentSupplier,ext,this));
-        extras.set("jpackageVersion",           new JPackageVersionClosure(project,ext,this));
-        extras.set("gocdEnvironmentName",       new GocdEnvironmentNameClosure(environmentSupplier, this));
-        extras.set("gocdPipelineCounter",       new GocdPipelineCounterClosure(environmentSupplier, this));
-        extras.set("gocdPipelineName",          new GocdPipelineNameClosure(environmentSupplier, this));
-        extras.set("gocdPipelineLabel",         new GocdPipelineLabelClosure(environmentSupplier, this));
-        extras.set("gocdPipelineGroupName",     new GocdPipelineGroupNameClosure(environmentSupplier, this));
-        extras.set("gocdStageCounter",          new GocdStageCounterClosure(environmentSupplier, this));
-        extras.set("gocdComputerName",          new ComputerNameClosure(environmentSupplier, this));
-        extras.set("gocdStageName",             new GocdStageNameClosure(environmentSupplier, this));
-        extras.set("gocdJobName",               new GocdJobNameClosure(environmentSupplier, this));
-        extras.set("gocdTriggerUser",           new GocdTriggerUserClosure(environmentSupplier, this));
-        extras.set("isAutomatedBuild",          new GocdIsAutomatedBuildClosure(environmentSupplier, this));
+        GocdVersionClosure gocdVersion = new GocdVersionClosure(project, environmentSupplier, ext, this);
+
+        extras.set("gitTagVersion", new GitTagVersionClosure(project, ext, this));
+        extras.set("gitTagLongVersion", new GitTagLongVersionClosure(project, ext, this));
+        extras.set("gocdVersion", gocdVersion);
+        extras.set("jpackageVersion", new JPackageVersionClosure(project, ext, this));
+        extras.set("gocdEnvironmentName", new GocdEnvironmentNameClosure(environmentSupplier, this));
+        extras.set("gocdPipelineCounter", new GocdPipelineCounterClosure(environmentSupplier, this));
+        extras.set("gocdPipelineName", new GocdPipelineNameClosure(environmentSupplier, this));
+        extras.set("gocdPipelineLabel", new GocdPipelineLabelClosure(environmentSupplier, this));
+        extras.set("gocdPipelineGroupName", new GocdPipelineGroupNameClosure(environmentSupplier, this));
+        extras.set("gocdStageCounter", new GocdStageCounterClosure(environmentSupplier, this));
+        extras.set("gocdComputerName", new ComputerNameClosure(environmentSupplier, this));
+        extras.set("gocdStageName", new GocdStageNameClosure(environmentSupplier, this));
+        extras.set("gocdJobName", new GocdJobNameClosure(environmentSupplier, this));
+        extras.set("gocdTriggerUser", new GocdTriggerUserClosure(environmentSupplier, this));
+        extras.set("isAutomatedBuild", new GocdIsAutomatedBuildClosure(environmentSupplier, this));
         extras.set("gocdGitMaterialBranchName", new GocdGitMaterialBranchNameClosure(environmentSupplier, this));
-        extras.set("gocdComputerName",          new GocdComputerNameClosure(environmentSupplier, this));
-        extras.set("gocdServerUrl",             new GocdServerUrlClosure(environmentSupplier, this));
+        extras.set("gocdComputerName", new GocdComputerNameClosure(environmentSupplier, this));
+        extras.set("gocdServerUrl", new GocdServerUrlClosure(environmentSupplier, this));
+
+        /*
+         * Ensure that after configuration phase, the version closure is evaluated and the projects version property
+         * is updated accordingly.
+         */
+        project.afterEvaluate(p->this.updateProjectVersionIfNotStaticallyDefined(p,gocdVersion));
     }
+
+    private void updateProjectVersionIfNotStaticallyDefined(Project project, GocdVersionClosure gocdVersion) {
+        Object version = project.getVersion();
+        if (null == version) {
+            project.setVersion(gocdVersion.doCall().build());
+            return;
+        }
+
+        if ("unspecified".equals(version.toString())) {
+            project.setVersion(gocdVersion.doCall().build());
+            return;
+        }
+
+        if ("".equalsIgnoreCase(version.toString().trim())) {
+            project.setVersion(gocdVersion.doCall().build());
+            return;
+        }
+
+        project.getLogger().info("GocdVersionPlugin: The project property [version] is already configured to [{}]. Skipping evaluation of Git tags for version number creation.", version);
+    }
+
 }

@@ -26,7 +26,7 @@ public class JPackageVersionBuilder {
     public String build() {
         String versionBase = String.valueOf(autoBuildVersion).trim();
         if ("".equalsIgnoreCase(versionBase)) {
-            String message = "Auto-generating JPackageVersion from timestamp. "
+            String message = "GocdVersionPlugin: Auto-generating JPackageVersion from timestamp. "
                            + "The provided autoBuildVersion String was empty but is supposed to "
                            + "match the pattern: yyyyMMdd.patch.";
             logger.warn(message);
@@ -42,21 +42,21 @@ public class JPackageVersionBuilder {
             try {
                 tagDate = LocalDate.parse(assumedTimestamp,DateTimeFormatter.ofPattern("yyyyMMdd"));
             } catch (DateTimeParseException parseError) {
-                String message = "Cannot build MSI/WIX compatible version number. Failed to parse the timestamp "
+                String message = "GocdVersionPlugin: Cannot build MSI/WIX compatible version number. Failed to parse the timestamp "
                                + "from supplied version String (%s). Expected: yyyyMMdd.patch";
                 throw new GradleException(String.format(message, versionBase));
             }
 
             int commitDist = Integer.parseInt(commitDistance);
             if (commitDist > 255) {
-                String message = "Cannot build MSI/WIX compatible version number. The patch version exceeds 255. "
+                String message = "GocdVersionPlugin: Cannot build MSI/WIX compatible version number. The patch version exceeds 255. "
                                + "Please rework the supplied version String (%s). Expected: yyyyMMdd.patch";
                 throw new GradleException(String.format(message, versionBase));
             }
             return tagWithCommitDistVersion(tagDate, commitDist);
         }
         
-        String message = "Generating JPackageVersion from todays timestamp as the supplied autoBuildVersion value (%s) "
+        String message = "GocdVersionPlugin: Generating JPackageVersion from todays timestamp as the supplied autoBuildVersion value (%s) "
                        + "does not match the expected pattern: yyyyMMdd.patch";
 
         logger.warn(String.format(message, versionBase));
@@ -69,7 +69,7 @@ public class JPackageVersionBuilder {
         String minor = DateTimeFormatter.ofPattern("ww").format(date);
         String patch = DateTimeFormatter.ofPattern("ee").format(date);
         String version = major+"."+minor+"."+patch;
-        String message = "JPackageVersion: %s (using default strategy major.minor.patch = year.weekOfYear.dayOfWeek)";
+        String message = "GocdVersionPlugin: JPackageVersion: %s (using default strategy major.minor.patch = year.weekOfYear.dayOfWeek)";
         logger.lifecycle(String.format(message, version));
         return version;
     }
@@ -79,7 +79,7 @@ public class JPackageVersionBuilder {
         String minor = DateTimeFormatter.ofPattern("ww").format(date);
         String patch = Integer.toString(commitDist);
         String version = major+"."+minor+"."+patch;
-        String message = "JPackageVersion: %s (using LocalDate.CommitDistance strategy, year.weekOfYear.commitDistance)";
+        String message = "GocdVersionPlugin: JPackageVersion: %s (using LocalDate.CommitDistance strategy, year.weekOfYear.commitDistance)";
         logger.lifecycle(String.format(message, version));
         return version;
     }

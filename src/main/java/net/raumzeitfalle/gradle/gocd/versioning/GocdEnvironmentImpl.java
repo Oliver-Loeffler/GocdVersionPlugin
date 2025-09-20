@@ -121,7 +121,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         try {
             return whoami(defaultUser);
         } catch (IOException e) {
-            project.getLogger().warn("Failed to obtain user with execution of whoami command. Continuing with fallback.", e);
+            project.getLogger().warn("GocdVersionPlugin: Failed to obtain user with execution of whoami command. Continuing with fallback.", e);
         }
         return defaultUser.get();
     }
@@ -193,7 +193,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
         try {
             return hostname(defaultHostname);
         } catch (IOException e) {
-            project.getLogger().warn("Failed to obtain hostname with execution of hostname command. Continuing with fallback.", e);
+            project.getLogger().warn("GocdVersionPlugin: Failed to obtain hostname with execution of hostname command. Continuing with fallback.", e);
         }
         return defaultHostname.get();
     }

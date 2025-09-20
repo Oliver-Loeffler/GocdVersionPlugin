@@ -57,11 +57,11 @@ public class GocdVersionBuilder {
             Object version = project.getVersion();
             if (null == version) {
                 project.getLogger()
-                        .warn("There is no project version defined. When running gocdVersion() without arguments, ensure that a project version is specified!");
+                        .debug("GocdVersionPlugin: There is no project version defined. When running gocdVersion() without arguments, ensure that a project version is specified!");
             }
             if ("unspecified".equalsIgnoreCase(String.valueOf(version).trim().toLowerCase())) {
                 project.getLogger()
-                        .warn("The project version is unspecified. When running gocdVersion() without arguments, ensure that a project version is specified!");
+                        .debug("GocdVersionPlugin: The project version is unspecified. When running gocdVersion() without arguments, ensure that a project version is specified!");
             }
             return version;
         };
@@ -130,7 +130,7 @@ public class GocdVersionBuilder {
                 versionBuilder.append(".").append(formattedTimestamp);
             }
         }
-        logger.debug("Version built: " + versionBuilder);
+        logger.debug("GocdVersionPlugin: Version built: " + versionBuilder);
         return versionBuilder.toString();
     }
 

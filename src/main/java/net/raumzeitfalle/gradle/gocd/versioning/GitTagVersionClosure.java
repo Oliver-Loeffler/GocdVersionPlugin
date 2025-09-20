@@ -28,7 +28,7 @@ public class GitTagVersionClosure extends Closure {
     public String doCall() {
         Logger logger = this.project.getLogger();
         Path buildFilePath = this.project.getBuildFile().toPath().getParent();
-        logger.lifecycle("Build file path: {}", buildFilePath);
+        logger.lifecycle("GocdVersionPlugin: Build file path: {}", buildFilePath);
         GitTagVersionHelper gitTagHelper = new GitTagVersionHelper(logger,
                                                                    buildFilePath);
 
@@ -38,17 +38,17 @@ public class GitTagVersionClosure extends Closure {
 
         if (latestTag.isPresent()) {
             GitDetails details = latestTag.get();
-            logger.lifecycle("...found Git tag: {}", details.getTag());
+            logger.lifecycle("GocdVersionPlugin: ...found Git tag: {}", details.getTag());
             return details.getTag();
         } 
-        logger.warn("Cannot read latest related Git Tag to build version number. Trying latest commit ID...");
+        logger.warn("GocdVersionPlugin: Cannot read latest related Git Tag to build version number. Trying latest commit ID...");
 
         Optional<GitDetails> latestCommit = gitTagHelper.getLatestCommit();
         if (latestCommit.isPresent()) {
-            logger.lifecycle("...found commit ID: {}", latestCommit.get().getTag());
+            logger.lifecycle("GocdVersionPlugin: ...found commit ID: {}", latestCommit.get().getTag());
             return latestCommit.get().getTag();
         }
-        logger.warn("Cannot read latest commit ID. Hence cannot build suitable version number. Using fallback tag.");
+        logger.warn("GocdVersionPlugin: Cannot read latest commit ID. Hence cannot build suitable version number. Using fallback tag.");
 
         return ext.getMissingGitCommitFallbackTag();
     }

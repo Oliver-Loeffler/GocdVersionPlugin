@@ -60,14 +60,14 @@ public class PrintGocdEnvironmentTask extends org.gradle.api.DefaultTask {
         }
 
         Path projectDir = getProject().getProjectDir().toPath();
-        getProject().getLogger().info("Project directory: {}", projectDir);
+        getProject().getLogger().info("GocdVersionPlugin: GocdVersionPlugin: Project directory: {}", projectDir);
         String automatedVersion = new GitTagVersionHelper(getProject().getLogger(), projectDir)
                 .setVersionTagRegex(ext.getSuitableTagRegex())
                 .setMissingTagFallback(ext.getMissingTagVersionDefault())
                 .getLatestTag()
                 .map(details->details.map(ext))
                 .orElseGet(()->{
-                    getProject().getLogger().warn("No git tag found, will use version as defined in build.gradle.");
+                    getProject().getLogger().warn("GocdVersionPlugin: No git tag found, will use version as defined in build.gradle.");
                     return String.valueOf(version);
                 });
         

@@ -69,29 +69,10 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
          */
         project.afterEvaluate(p->this.updateProjectVersionIfNotStaticallyDefined(p,gocdVersion));
 
-        project.getGradle().addBuildListener(new BuildListener() {
-            @Override
-            public void settingsEvaluated(Settings settings) {
-
-            }
-
-            @Override
-            public void projectsLoaded(Gradle gradle) {
-
-            }
-
-            @Override
-            public void projectsEvaluated(Gradle gradle) {
-
-            }
-
-            @Override
-            public void buildFinished(BuildResult result) {
-                Supplier<String> version = ()->project.getVersion().toString();
-                result.getGradle().getRootProject().getLogger().lifecycle("Project version: " + version.get());
-            }
+        project.getGradle().afterProject(p ->{
+            Supplier<String> version = ()->p.getVersion().toString();
+            p.getLogger().lifecycle("Project version: " + version.get());
         });
-
 
     }
 

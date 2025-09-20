@@ -95,7 +95,7 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
             @Override
             public void buildFinished(BuildResult result) {
                 Supplier<String> version = ()->project.getVersion().toString();
-                result.getGradle().getRootProject().getLogger().lifecycle("Project version built: " + version.get());
+                result.getGradle().getRootProject().getLogger().lifecycle("Version built: " + version.get());
             }
         });
 
@@ -125,7 +125,7 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
     private static void updateVersion(Project project, GocdVersionClosure gocdVersion) {
         String updatedVersion = gocdVersion.doCall().build();
         project.setVersion(updatedVersion);
-        project.getLogger().lifecycle("Configured version: " + updatedVersion);
+        project.getLogger().lifecycle("Generated version: " + updatedVersion);
     }
 
 }

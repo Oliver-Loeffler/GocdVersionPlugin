@@ -5,7 +5,15 @@ Auto-generating version numbers for [GoCD](https://www.gocd.org/)  automated bui
 
 This plugin has the purpose to work with [GoCD](https://www.gocd.org/) in order to detect if a build runs in a GoCD pipeline on a GoCD build agent.
 Depending on that, the project version identifier will be updated. There are no dependencies to other plugins. The only external dependency is Eclipses [JGit](https://www.eclipse.org/jgit/).
-Versions `0.0.2` till `0.0.11` are working with Java-8 and newer. Since version 0.0.12, Java 11 is now again the baseline.
+Versions `0.0.2` till `0.0.11` are working with Java-8 and newer. Since version `0.0.12`, Java 11 is now again the baseline.
+
+Interestingly it was required to keep Java-8 support for the plugin itself, hence with version `0.1.0` Java-8 is supported again- 
+
+## Future and Outlook
+
+As GoCD is only one possible CI/CD environment and the ability to detect other CI/CD systems has been added, the plugin will be renamed in future.
+Its main purpose is to generate version numbers from git tags, hence its new name will be GitVersionPlugin.
+The distinguished capabilities handling GoCD, Github or Gitlab will be removed, all existing capabilities will be collected under the CicdEnvironment umbrella.
 
 ## Combining Git with GoCD
 
@@ -20,18 +28,11 @@ As of now for a Java library the Gradle code (Groovy DSL) looks as follows:
 ```groovy
 plugins {
     id "java-library"
- // id "com.palantir.git-version" version "0.15.0"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.11'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.1.0'
 }
-
-// Git details are provided by git-version plugin
-// version = gocdVersion(versionDetails().lastTag+'.'+versionDetails().commitDistance,
-//                       versionDetails().lastTag+'.'+versionDetails().commitDistance+'-'+versionDetails().gitHash).build()
 
 version = gocdVersion().build()
 println("Automatic version=" + version)
-// There is no need anymore to run other plugins as this one has native git support via JGit.
-// Hence, git tags can be used to generate version numbers automatically.
 
 ```
 
@@ -179,13 +180,13 @@ buildscript {
       mavenLocal()
   }
   dependencies {
-      classpath 'net.raumzeitfalle.gradle.gocd:GocdVersionPlugin:0.0.8'
+      classpath 'net.raumzeitfalle.gradle.gocd:GocdVersionPlugin:0.1.0'
   }
 }
 
 plugins {
     id 'java-library'
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.0.8'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.1.0'
 }
 
 version = gocdVersion().build()
@@ -196,7 +197,10 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation(platform("org.junit:junit-bom:5.13.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    
     api 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.google.guava:guava:30.1.1-jre'
 }

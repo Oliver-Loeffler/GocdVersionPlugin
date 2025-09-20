@@ -23,18 +23,31 @@ This means, that just re-running the build pipeline, a new version number is cre
 
 # How does the Plugin work?
 
-As of now for a Java library the Gradle code (Groovy DSL) looks as follows:
+With older versions before `0.3.0`, following build code modification was needed to make the plugin work:
 
 ```groovy
 plugins {
     id "java-library"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.1.0'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.0'
 }
 
 version = gocdVersion().build()
 println("Automatic version=" + version)
 
 ```
+
+As with version `0.3.0`, the plugin automatically updates the projects version property after the configuration phase.
+This reduces the required build code:
+
+```groovy
+plugins {
+    id "java-library"
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.0'
+}
+
+```
+There is no need anymore to manually assign the version. The plugin does the job.
+However, when a version is manually assigned, the plugin won't modify the version number, it will stay silent.
 
 In this example I've previously used the [gradle-git-version plugin](https://github.com/palantir/gradle-git-version) plugin to build the basic version number for a project. A version number might look like: MAJOR.MINOR.PATCH (e.g. 2.0.11).
 The GocdVersionPlugin provides support for Git using JGit (since 0.0.6), hence another 3rd party plugin is no longer needed, so a version number can be directly generated from Git tag.
@@ -180,17 +193,14 @@ buildscript {
       mavenLocal()
   }
   dependencies {
-      classpath 'net.raumzeitfalle.gradle.gocd:GocdVersionPlugin:0.1.0'
+      classpath 'net.raumzeitfalle.gradle.gocd:GocdVersionPlugin:0.3.0'
   }
 }
 
 plugins {
     id 'java-library'
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.1.0'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.0'
 }
-
-version = gocdVersion().build()
-println("Automatic version=" + version)
 
 repositories {
     mavenCentral()

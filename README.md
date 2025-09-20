@@ -28,7 +28,7 @@ With older versions before `0.3.0`, following build code modification was needed
 ```groovy
 plugins {
     id "java-library"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.0'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.9'
 }
 
 version = gocdVersion().build()
@@ -42,7 +42,7 @@ This reduces the required build code:
 ```groovy
 plugins {
     id "java-library"
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.0'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.9'
 }
 
 ```
@@ -199,7 +199,7 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.0'
+    id 'net.raumzeitfalle.gradle.gocdversion' version '0.3.9'
 }
 
 repositories {

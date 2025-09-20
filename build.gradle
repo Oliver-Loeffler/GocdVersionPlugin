@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '1.3.1'
+    id 'com.gradle.plugin-publish' version '2.0.0'
 }
 
 repositories {
@@ -11,8 +11,8 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 group = 'net.raumzeitfalle.gradle.gocd'
@@ -25,21 +25,23 @@ gradlePlugin {
     plugins {
         gocdVersionPlugin {
             id = 'net.raumzeitfalle.gradle.gocdversion'
-            displayName = 'Git GoCD Version Number Plugin'
-            description = 'Allows to generate version numbers from Git tags and GoCD pipeline environment details. '+
-                          'Provides closures to read environment variables of GoCD pipelines. '
-                          'Provides very simple method to create MSI/WIX compatible version numbers e.g. from '+
-                          'Git version tag.'
             implementationClass = 'net.raumzeitfalle.gradle.gocd.versioning.GocdVersionPlugin'
-            tags.set(['versioning', 'gocd' ,'ci/cd' ,'cruise-control' ,'ci', 'cd', 'cicd', 'continuous delivery', 'git'])
+            displayName = 'Git Version Number Plugin'
+            description = 'Allows to generate version numbers from Git tags and CICD pipeline environment details. '+
+                          'Provides closures to read environment variables of GoCD pipelines. Supports detection ' +
+                          'of Github Actions and Gitlab CICD pipelines and jobs. Provides approach method to create ' +
+                          'MSI/WIX compatible version numbers e.g. from a Git tag derived version.'
+            tags.set(['versioning', 'gocd', 'ci/cd', 'cruise-control', 'ci',
+                      'cd', 'cicd', 'continuous delivery', 'git', 'Gitlab CICD', 'Github Actions'])
         }
     }
 }
 
 dependencies {
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.13.3.202401111512-r'
+    testImplementation(platform("org.junit:junit-bom:5.13.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 test {

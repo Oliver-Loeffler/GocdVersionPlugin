@@ -40,7 +40,7 @@ class JPackageVersionBuilderTest {
         classUnderTest = new JPackageVersionBuilder(extension, "20211125.256", logger);
         Throwable t = assertThrows(GradleException.class, ()->classUnderTest.build());
         
-        String expected = "Cannot build MSI/WIX compatible version number. "
+        String expected = "GocdVersionPlugin: Cannot build MSI/WIX compatible version number. "
                         + "The patch version exceeds 255. "
                         + "Please rework the supplied version String (20211125.256). "
                         + "Expected: yyyyMMdd.patch";
@@ -53,7 +53,7 @@ class JPackageVersionBuilderTest {
         classUnderTest = new JPackageVersionBuilder(extension, "99999999.0", logger);
         Throwable t = assertThrows(GradleException.class, ()->classUnderTest.build());
         
-        String expected = "Cannot build MSI/WIX compatible version number. "
+        String expected = "GocdVersionPlugin: Cannot build MSI/WIX compatible version number. "
                         + "Failed to parse the timestamp from supplied version String (99999999.0). "
                         + "Expected: yyyyMMdd.patch";
         

@@ -159,7 +159,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
      */
     @Override
     public boolean isAutomatedBuild() {
-        var value = environment.get(GOCD.GO_PIPELINE_COUNTER.toString());
+        String value = environment.get(GOCD.GO_PIPELINE_COUNTER.toString());
         if (null != value) {
             return true;
         }

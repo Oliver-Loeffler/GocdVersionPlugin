@@ -69,17 +69,23 @@ public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
     private void updateProjectVersionIfNotStaticallyDefined(Project project, GocdVersionClosure gocdVersion) {
         Object version = project.getVersion();
         if (null == version) {
-            project.setVersion(gocdVersion.doCall().build());
+            String updatedVersion = gocdVersion.doCall().build();
+            project.setVersion(updatedVersion);
+            project.getLogger().lifecycle("Project version: " + updatedVersion);
             return;
         }
 
         if ("unspecified".equals(version.toString())) {
-            project.setVersion(gocdVersion.doCall().build());
+            String updatedVersion = gocdVersion.doCall().build();
+            project.setVersion(updatedVersion);
+            project.getLogger().lifecycle("Project version: " + updatedVersion);
             return;
         }
 
         if ("".equalsIgnoreCase(version.toString().trim())) {
-            project.setVersion(gocdVersion.doCall().build());
+            String updatedVersion = gocdVersion.doCall().build();
+            project.setVersion(updatedVersion);
+            project.getLogger().lifecycle("Project version: " + updatedVersion);
             return;
         }
 

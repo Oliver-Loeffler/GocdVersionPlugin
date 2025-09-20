@@ -4,6 +4,7 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.util.SystemReader;
 import org.gradle.api.logging.Logger;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ class GitTagCollector {
         }
     }
 
-    public Map<ObjectId,String> collect() {
+    public Map<ObjectId, String> collect() {
         try {
             return collectTags();
         } catch (IOException e) {
@@ -44,8 +45,8 @@ class GitTagCollector {
         }
     }
 
-    public Map<ObjectId,String> collectTags() throws IOException {
-        Map<ObjectId,String> tags = new HashMap<>();
+    public Map<ObjectId, String> collectTags() throws IOException {
+        Map<ObjectId, String> tags = new HashMap<>();
         List<Ref> refs = repo.getRefDatabase().getRefsByPrefix(Constants.R_TAGS);
         for (Ref ref : refs) {
             storeSuitableTag(tags, ref);
@@ -57,7 +58,7 @@ class GitTagCollector {
         return refName.replace(Constants.R_TAGS, "");
     }
 
-    private void storeSuitableTag(Map<ObjectId,String> tags, Ref commitRef) {
+    private void storeSuitableTag(Map<ObjectId, String> tags, Ref commitRef) {
         String refName = commitRef.getName();
         String tag = getTag(refName);
         if (isSuitable(tag)) {

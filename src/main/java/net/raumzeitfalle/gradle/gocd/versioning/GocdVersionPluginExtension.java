@@ -3,6 +3,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * Extension for GocdVersionPlugin
+ */
 public class GocdVersionPluginExtension {
 
     private String defaultTimestampPattern = "yyyyMMddHHmmss";
@@ -17,6 +20,12 @@ public class GocdVersionPluginExtension {
     private String  missingGitTagVersionDefault = "0.0";
     private String  suitableTagRegex = "^([vV])?\\d+([.]\\d+)?([.]\\d+)?([.]\\d+)?$";
 
+    /**
+     * Allows to configure a regular expression defining how a Git tag should look like,
+     * so that it can be used as a version prefix.
+     *
+     * @param newSuitableTagRegex regular expression describing a tag suitable as a version number
+     */
     public void setSuitableTagRegex(String newSuitableTagRegex) {
         if (newSuitableTagRegex == null || "".equals(newSuitableTagRegex.trim())) {
             this.suitableTagRegex = GitTagCollector.DEFAULT_VERSIONABLE_TAG_REGEX;
@@ -25,15 +34,24 @@ public class GocdVersionPluginExtension {
         }
     }
 
+    /**
+     * @return Currently configured regular expression describing a tag suitable as a version number.
+     */
     public String getSuitableTagRegex() {
         return suitableTagRegex;
     }
 
-
+    /**
+     * @return Supplier for current timestamp (now) {@link LocalDateTime}.
+     */
     public Supplier<LocalDateTime> getTimestampSupplier() {
         return timestampSupplier;
     }
 
+    /**
+     * Allows to configure the mechanism how a timestamp (to be used in a version) is generated.
+     * @param timestampSupplier mechanism how a timestamp (to be used in a version) is generated
+     */
     public void setTimestampSupplier(Supplier<LocalDateTime> timestampSupplier) {
         if (timestampSupplier == null) {
             this.timestampSupplier = ()->LocalDateTime.now();

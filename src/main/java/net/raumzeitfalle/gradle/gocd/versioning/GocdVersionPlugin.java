@@ -2,12 +2,21 @@ package net.raumzeitfalle.gradle.gocd.versioning;
 
 import java.util.function.Supplier;
 
+import org.eclipse.jgit.util.SystemReader;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 
 import groovy.lang.Closure;
 
-public class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
+public final class GocdVersionPlugin implements org.gradle.api.Plugin<Project> {
+
+    static {
+        suppressJGitAttemptToExecLocalGit();
+    }
+
+    private static final void suppressJGitAttemptToExecLocalGit() {
+        SystemReader.setInstance(JGitNoExecSystemReader.get());
+    }
 
     @SuppressWarnings("unused")
     private static final String GROUP = "GOCD CI/CD";

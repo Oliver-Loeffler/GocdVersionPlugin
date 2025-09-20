@@ -9,6 +9,7 @@ import java.util.*;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.util.SystemReader;
 import org.gradle.api.logging.Logger;
 
 

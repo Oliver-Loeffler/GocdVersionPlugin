@@ -155,7 +155,7 @@ public class GocdEnvironmentImpl implements GocdEnvironment {
      * For Gitlab CI/CD the variable CI must exist and have the value true.
      * For Github Actions, a variable named GITHUB_ACTIONS=true is supposed to be available.
 
-     * @return
+     * @return true (boolean) in case of automated builds.
      */
     @Override
     public boolean isAutomatedBuild() {
